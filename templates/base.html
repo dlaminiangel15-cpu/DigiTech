@@ -7,7 +7,13 @@
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        @keyframes circuitMove {
+            0% { stroke-dashoffset: 100; }
+            100% { stroke-dashoffset: 0; }
+        }
+    </style>
     {% block head %}{% endblock %}
 </head>
 <body>
@@ -94,12 +100,20 @@
         </div>
     </nav>
 
-    
+    <!-- Mobile Overlay -->
+    <div id="sidebar-overlay" onclick="closeSidebar()" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:999; backdrop-filter:blur(2px);"></div>
+
     <main class="main-content animate-up">
-        <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3rem;">
-            <div>
-                <h1 style="font-size: 2.25rem; margin-bottom: 0.5rem;">{% block header %}{% endblock %}</h1>
-                <p style="font-size: 0.95rem; font-weight: 500;">Welcome to the Digital Infrastructure Management System</p>
+        <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+            <div style="display:flex; align-items:center; gap:1rem;">
+                <!-- Hamburger for Mobile -->
+                <button id="hamburger" onclick="toggleSidebar()" style="display:none; background:white; border:1px solid var(--border); border-radius:10px; width:42px; height:42px; align-items:center; justify-content:center; cursor:pointer; box-shadow:var(--shadow-sm); flex-shrink:0;">
+                    <i class="fas fa-bars" style="color:var(--primary); font-size:1.1rem;"></i>
+                </button>
+                <div>
+                    <h1 style="font-size: 1.75rem; margin-bottom: 0.25rem;">{% block header %}{% endblock %}</h1>
+                    <p style="font-size: 0.85rem; font-weight: 500; color:var(--text-muted);">Digital Infrastructure Management System</p>
+                </div>
             </div>
             
             {% if current_user.is_authenticated %}
@@ -238,6 +252,34 @@
             console.log("Global Maps SDK Initialized");
             if (typeof pageInitMap === 'function') pageInitMap();
         };
+
+        // ── Mobile Sidebar Toggle ────────────────────────────────
+        const sidebar   = document.querySelector('.sidebar');
+        const overlay   = document.getElementById('sidebar-overlay');
+        const hamburger = document.getElementById('hamburger');
+
+        function toggleSidebar() {
+            sidebar.classList.toggle('sidebar-open');
+            overlay.style.display = sidebar.classList.contains('sidebar-open') ? 'block' : 'none';
+        }
+
+        function closeSidebar() {
+            sidebar.classList.remove('sidebar-open');
+            overlay.style.display = 'none';
+        }
+
+        // Show hamburger on small screens
+        function checkScreenSize() {
+            if (window.innerWidth <= 768) {
+                if (hamburger) hamburger.style.display = 'inline-flex';
+            } else {
+                if (hamburger) hamburger.style.display = 'none';
+                closeSidebar();
+            }
+        }
+
+        checkScreenSize();
+        window.addEventListener('resize', checkScreenSize);
     </script>
     {% block scripts %}{% endblock %}
 </body>
