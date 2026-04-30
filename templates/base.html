@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Digital Infrastructure{% endblock %} - Smart Infrastructure Solutions</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <nav class="sidebar">
+        <a href="/" class="logo" style="flex-direction: column; align-items: flex-start; gap: 0; display: flex; margin-bottom: 3rem; text-decoration: none; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); padding: 1rem; border-radius: 14px;">
+            <svg width="40" height="40" viewBox="0 0 100 100" style="margin-bottom: 10px;">
+                <path d="M25 15 H60 C80 15 90 30 90 50 C90 70 80 85 60 85 H25 V15" fill="var(--primary-light)" />
+                <path d="M35 25 H60 C75 25 80 35 80 50 C80 65 75 75 60 75 H35 V25" fill="white" opacity="0.15"/>
+                <path d="M0 40 H45" stroke="white" stroke-width="4" stroke-linecap="round" stroke-dasharray="50" stroke-dashoffset="50" style="animation: circuitMove 2.5s infinite ease-in-out;" />
+                <path d="M0 52 H50" stroke="white" stroke-width="4" stroke-linecap="round" stroke-dasharray="55" stroke-dashoffset="55" style="animation: circuitMove 2.5s infinite ease-in-out 0.4s;" />
+                <path d="M0 64 H45" stroke="white" stroke-width="4" stroke-linecap="round" stroke-dasharray="50" stroke-dashoffset="50" style="animation: circuitMove 2.5s infinite ease-in-out 0.8s;" />
+            </svg>
+            <div style="font-size: 0.9rem; color: white; font-weight: 900; line-height: 1.2;">DIGITAL</div>
+            <div style="font-size: 0.9rem; color: white; font-weight: 900; line-height: 1.2;">INFRASTRUCTURES</div>
+            <div style="font-size: 0.55rem; letter-spacing: 0.18em; color: rgba(255,255,255,0.5); font-weight: 700; margin-top: 4px;">INVESTMENT PTY LTD</div>
+        </a>
+
+        <ul class="nav-links">
+            {% if current_user.is_authenticated %}
+                {% if current_user.role == 'admin' %}
+                    <li class="nav-item">
+                        <a href="{{ url_for('admin_dashboard') }}" class="nav-link {% if request.endpoint == 'admin_dashboard' %}active{% endif %}">
+                            <i class="fas fa-th-large"></i> <span>Dispatcher</span>
+                        </a>
+                    </li>
+                {% elif current_user.role == 'engineer' %}
+                    <li class="nav-item">
+                        <a href="{{ url_for('engineer_dashboard') }}" class="nav-link {% if request.endpoint == 'engineer_dashboard' %}active{% endif %}">
+                            <i class="fas fa-tools"></i> <span>Service Jobs</span>
+                        </a>
+                    </li>
+                {% endif %}
+                <hr class="nav-divider">
+                <li class="nav-item">
+                    <a href="{{ url_for('logout') }}" class="nav-link" style="color: #f87171;">
+                        <i class="fas fa-sign-out-alt"></i> <span>Log Out</span>
+                    </a>
+                </li>
+            {% else %}
+                <li class="nav-item">
+                    <a href="{{ url_for('customer_view') }}" class="nav-link {% if request.endpoint == 'customer_view' %}active{% endif %}">
+                        <i class="fas fa-headset"></i> <span>Support Center</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ url_for('book_appointment') }}" class="nav-link {% if request.endpoint == 'book_appointment' %}active{% endif %}">
+                        <i class="fas fa-plus-circle"></i> <span>New Booking</span>
+                    </a>
+                </li>
+                <hr class="nav-divider">
+                <li class="nav-item">
+                    <a href="{{ url_for('login') }}" class="nav-link {% if request.endpoint == 'login' %}active{% endif %}">
+                        <i class="fas fa-sign-in-alt"></i> <span>Staff Login</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ url_for('signup') }}" class="nav-link {% if request.endpoint == 'signup' %}active{% endif %}">
+                        <i class="fas fa-user-plus"></i> <span>Create Account</span>
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+
+        <div style="position: absolute; bottom: 2rem; left: 1rem; right: 1rem;">
+            <div style="background: rgba(255,255,255,0.05); padding: 1rem 1.25rem; border-radius: 12px; font-size: 0.8rem; border: 1px solid rgba(255,255,255,0.08);">
+                {% if current_user.is_authenticated %}
+                    <div style="display:flex; align-items:center; gap:0.6rem;">
+                        <div style="width:32px;height:32px;background:var(--primary);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:900;font-size:0.85rem;">{{ current_user.name[0].upper() }}</div>
+                        <div>
+                            <div style="color:white;font-weight:700;font-size:0.82rem;">{{ current_user.name }}</div>
+                            <div style="color:rgba(255,255,255,0.4);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.05em;">{{ current_user.role }}</div>
+                        </div>
+                    </div>
+                {% else %}
+                    <div style="display:flex;align-items:center;gap:0.6rem;">
+                        <i class="fas fa-phone" style="color:var(--primary-light);"></i>
+                        <div>
+                            <div style="color:rgba(255,255,255,0.5);font-size:0.72rem;">Support Line</div>
+                            <div style="color:white;font-weight:700;font-size:0.82rem;">+268 7621 6888</div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    
+    <main class="main-content animate-up">
+        <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3rem;">
+            <div>
+                <h1 style="font-size: 2.25rem; margin-bottom: 0.5rem;">{% block header %}{% endblock %}</h1>
+                <p style="font-size: 0.95rem; font-weight: 500;">Welcome to the Digital Infrastructure Management System</p>
+            </div>
+            
+            {% if current_user.is_authenticated %}
+            <div id="notif-wrapper" style="position: relative;">
+                <div id="notif-trigger" class="glass-card" style="cursor: pointer; position: relative; padding: 0.75rem; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-bell" style="font-size: 1.25rem; color: var(--primary);"></i>
+                    <span id="notif-badge" style="display:none; position:absolute; top: -5px; right: -5px; min-width: 20px; height: 20px; background: var(--danger); color: white; border-radius: 50%; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; font-weight: 800; border: 2px solid white; box-shadow: var(--shadow-sm);">0</span>
+                </div>
+                
+                <div id="notif-dropdown" class="glass-card" style="display:none; position: absolute; top: 120%; right: 0; width: 350px; z-index: 1000; overflow: hidden; padding: 0; border: 1px solid var(--border);">
+                    <div style="padding: 1.25rem; border-bottom: 1px solid var(--border); background: rgba(248, 250, 252, 0.8); display: flex; justify-content: space-between; align-items: center;">
+                        <h4 style="margin: 0; font-size: 1rem; color: var(--text-main);">Notifications</h4>
+                        <button onclick="clearNotifications()" style="background: none; border: none; color: var(--primary); font-size: 0.8rem; cursor: pointer; font-weight: 700;">Mark all read</button>
+                    </div>
+                    <div id="notif-list" style="max-height: 400px; overflow-y: auto;">
+                        <!-- Notifs injected here -->
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </header>
+        
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="card animate-up" style="padding: 1.25rem; margin-bottom: 2rem; border-left: 5px solid var(--primary); background: white; color: var(--text-main); display: flex; align-items: center; gap: 1rem;">
+                        <i class="fas fa-check-circle" style="color: var(--success); font-size: 1.25rem;"></i> 
+                        <span style="font-weight: 600;">{{ message }}</span>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="content-body">
+            {% block content %}{% endblock %}
+        </div>
+
+        <footer style="margin-top: 8rem; padding-top: 4rem; border-top: 1px solid var(--border); padding-bottom: 3rem;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 4rem;">
+                <div class="animate-up" style="animation-delay: 0.1s;">
+                    <div style="font-weight: 900; color: var(--primary); font-size: 1rem; margin-bottom: 1.5rem; letter-spacing: -0.02em;">DIGITAL INFRASTRUCTURES</div>
+                    <p style="font-size: 0.85rem; line-height: 1.7; color: var(--text-muted);">
+                        Leading provider of tech infrastructure, hardware maintenance, and specialized systems across Eswatini. High standards, unique solutions.
+                    </p>
+                </div>
+                <div class="animate-up" style="animation-delay: 0.2s;">
+                    <h5 style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 1.5rem; color: var(--text-main); font-weight: 800;">Headquarters</h5>
+                    <p style="font-size: 0.85rem; line-height: 1.6; color: var(--text-muted);">
+                        <i class="fas fa-map-marker-alt" style="color: var(--primary); margin-right: 0.75rem;"></i>
+                        Bosco Skill Centre, Plot No. 7 Of Farm 280,<br>
+                        Southern Distributor Road, Manzini Industrial Site,<br>
+                        Manzini District, Eswatini
+                    </p>
+                </div>
+                <div class="animate-up" style="animation-delay: 0.3s;">
+                    <h5 style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 1.5rem; color: var(--text-main); font-weight: 800;">Get in Touch</h5>
+                    <p style="font-size: 0.85rem; margin-bottom: 0.75rem; color: var(--text-muted); font-weight: 500;">
+                        <i class="fas fa-envelope-open-text" style="color: var(--primary); margin-right: 0.75rem;"></i>
+                        accounts@digitalinfrastructure.co.za
+                    </p>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); font-weight: 500;">
+                        <i class="fas fa-mailbox" style="color: var(--primary); margin-right: 0.75rem;"></i>
+                        PO Box 5513, Manzini
+                    </p>
+                </div>
+            </div>
+            <div style="margin-top: 5rem; text-align: center; font-size: 0.75rem; color: var(--text-muted); font-weight: 600; border-top: 1px solid #f1f5f9; padding-top: 2rem;">
+                &copy; 2026 DIGITAL INFRASTRUCTURES INVESTMENT PTY LTD. Engineered for Excellence.
+            </div>
+        </footer>
+    </main>
+
+    <!-- Global SDKs -->
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
+    {% if google_maps_api_key %}
+        <script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&callback=initMap" async defer></script>
+    {% endif %}
+
+    <script>
+        // Notification Logic with better UI
+        const trigger = document.getElementById('notif-trigger');
+        const dropdown = document.getElementById('notif-dropdown');
+        const badge = document.getElementById('notif-badge');
+        const list = document.getElementById('notif-list');
+
+        if (trigger) {
+            trigger.onclick = (e) => {
+                e.stopPropagation();
+                dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+                dropdown.classList.add('animate-fade');
+            };
+            document.onclick = () => { if(dropdown) dropdown.style.display = 'none'; };
+            dropdown.onclick = (e) => e.stopPropagation();
+
+            async function fetchNotifications() {
+                try {
+                    const res = await fetch('/api/notifications');
+                    const data = await res.json();
+                    
+                    if (data.count > 0) {
+                        badge.style.display = 'flex';
+                        badge.innerText = data.count;
+                        list.innerHTML = data.notifications.map(n => `
+                            <div style="padding: 1.25rem; border-bottom: 1px solid var(--border); font-size: 0.9rem; transition: background 0.2s; cursor: pointer;">
+                                <p style="margin: 0 0 0.4rem 0; line-height: 1.5; color: var(--text-main); font-weight: 500;">${n.message}</p>
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <i class="far fa-clock" style="font-size: 0.75rem; color: var(--text-muted);"></i>
+                                    <span style="font-size: 0.75rem; color: var(--text-muted);">${n.time}</span>
+                                </div>
+                            </div>
+                        `).join('');
+                    } else {
+                        badge.style.display = 'none';
+                        list.innerHTML = `
+                            <div style="padding: 3rem 2rem; text-align: center;">
+                                <i class="fas fa-bell-slash" style="font-size: 2rem; color: #e2e8f0; margin-bottom: 1rem; display: block;"></i>
+                                <span style="color: var(--text-muted); font-size: 0.9rem; font-weight: 500;">All caught up!</span>
+                            </div>
+                        `;
+                    }
+                } catch (e) { console.error("Notif Error:", e); }
+            }
+
+            async function clearNotifications() {
+                await fetch('/api/notifications/clear', { method: 'POST' });
+                fetchNotifications();
+            }
+
+            // Poll every 30s
+            fetchNotifications();
+            setInterval(fetchNotifications, 30000);
+        }
+
+        // Global Map Fallback
+        window.initMap = function() {
+            console.log("Global Maps SDK Initialized");
+            if (typeof pageInitMap === 'function') pageInitMap();
+        };
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

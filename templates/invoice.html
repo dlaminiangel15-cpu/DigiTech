@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block header %}Generate Invoice{% endblock %}
+
+{% block content %}
+<div class="glass" style="max-width: 600px; margin: 0 auto; padding: 2.5rem;">
+    <div style="text-align: center; margin-bottom: 2rem;">
+        <i class="fas fa-file-invoice-dollar" style="font-size: 3rem; color: var(--primary); margin-bottom: 1rem;"></i>
+        <h3>Billing for Appointment #{{ appointment.id }}</h3>
+        <p style="color: var(--text-muted)">Customer: {{ appointment.customer.name }}</p>
+    </div>
+
+    <!-- AI Triage Alert -->
+    <div class="glass" style="background: rgba(16, 185, 129, 0.1); border: 1px solid var(--success); padding: 1rem; margin-bottom: 2rem; border-radius: 12px;">
+        <div style="display: flex; gap: 1rem; align-items: center;">
+            <i class="fas fa-robot" style="color: var(--success); font-size: 1.5rem;"></i>
+            <div>
+                <p style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: var(--success); font-weight: 700;">AI Triage Suggestion</p>
+                <p style="font-size: 0.9rem;">{{ ai_note }}</p>
+            </div>
+        </div>
+    </div>
+
+    <form method="POST">
+        <div class="form-group">
+            <label>Service Fee ($)</label>
+            <input type="number" name="service_fee" id="service_fee" step="0.01" placeholder="0.00" required oninput="calcTotal()">
+        </div>
+        
+        <div class="form-group">
+            <label>Transport & Logistic Fee ($)</label>
+            <input type="number" name="transport_fee" id="transport_fee" step="0.01" placeholder="0.00" required oninput="calcTotal()">
+        </div>
+
+        <div class="form-group">
+            <label>Detailed Description</label>
+            <textarea name="description" rows="3" placeholder="Breakdown of labor and parts..."></textarea>
+        </div>
+
+        <div class="glass" style="padding: 1.5rem; text-align: right; margin-bottom: 2rem;">
+            <span style="color: var(--text-muted); font-size: 1.1rem;">Total Amount:</span>
+            <span id="total_amount" style="font-size: 2rem; font-weight: 800; color: var(--primary); margin-left: 1rem;">$0.00</span>
+        </div>
+
+        <div style="display: flex; gap: 1rem;">
+            <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline" style="flex: 1; text-align: center;">Back to Dashboard</a>
+            <button type="submit" class="btn btn-primary" style="flex: 2;">Finalize & Send Invoice</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    function calcTotal() {
+        const service = parseFloat(document.getElementById('service_fee').value) || 0;
+        const transport = parseFloat(document.getElementById('transport_fee').value) || 0;
+        const total = service + transport;
+        document.getElementById('total_amount').innerText = '$' + total.toFixed(2);
+    }
+</script>
+{% endblock %}

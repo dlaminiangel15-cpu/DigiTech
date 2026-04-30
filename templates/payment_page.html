@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+
+{% block title %}Checkout - Secure Payment{% endblock %}
+{% block header %}Digital Payment Hub{% endblock %}
+
+{% block content %}
+<div class="animate-up" style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 3rem; align-items: start; animation-delay: 0.1s;">
+    
+    <!-- Payment Methods -->
+    <div class="card" style="padding: 3rem; border-radius: 24px; box-shadow: var(--shadow-premium);">
+        <div style="margin-bottom: 3rem;">
+            <h3 style="font-size: 1.5rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.5rem;">Select Payment Method</h3>
+            <p style="color: var(--text-muted); font-weight: 500;">All transactions are encrypted and secure.</p>
+        </div>
+
+        <div style="display: grid; gap: 1.5rem; margin-bottom: 4rem;">
+            <!-- Credit Card -->
+            <label style="border: 2px solid var(--primary); background: #f0f7ff; padding: 1.5rem; border-radius: 16px; display: flex; align-items: center; gap: 1.5rem; cursor: pointer; position: relative;">
+                <input type="radio" name="pay_method" checked style="width: 20px; height: 20px;">
+                <div style="width: 50px; height: 50px; background: white; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 1.5rem;">
+                    <i class="fas fa-credit-card"></i>
+                </div>
+                <div>
+                    <div style="font-weight: 800; color: var(--text-main);">Credit or Debit Card</div>
+                    <div style="font-size: 0.85rem; color: var(--text-muted);">Visa, Mastercard, Maestro</div>
+                </div>
+                <div style="margin-left: auto; display: flex; gap: 0.5rem;">
+                    <i class="fab fa-cc-visa" style="font-size: 1.5rem; color: #1a1f71;"></i>
+                    <i class="fab fa-cc-mastercard" style="font-size: 1.5rem; color: #eb001b;"></i>
+                </div>
+            </label>
+
+            <!-- Mobile Money (Eswatini Context) -->
+            <label style="border: 1px solid var(--border); padding: 1.5rem; border-radius: 16px; display: flex; align-items: center; gap: 1.5rem; cursor: pointer; opacity: 0.7;">
+                <input type="radio" name="pay_method" style="width: 20px; height: 20px;">
+                <div style="width: 50px; height: 50px; background: #fffbeb; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #d97706; font-size: 1.5rem;">
+                    <i class="fas fa-mobile-alt"></i>
+                </div>
+                <div>
+                    <div style="font-weight: 800; color: var(--text-main);">Mobile Money (MoMo)</div>
+                    <div style="font-size: 0.85rem; color: var(--text-muted);">MTN MoMo or Eswatini Mobile</div>
+                </div>
+            </label>
+
+            <!-- EFT -->
+            <label style="border: 1px solid var(--border); padding: 1.5rem; border-radius: 16px; display: flex; align-items: center; gap: 1.5rem; cursor: pointer; opacity: 0.7;">
+                <input type="radio" name="pay_method" style="width: 20px; height: 20px;">
+                <div style="width: 50px; height: 50px; background: #f0fdf4; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #10b981; font-size: 1.5rem;">
+                    <i class="fas fa-university"></i>
+                </div>
+                <div>
+                    <div style="font-weight: 800; color: var(--text-main);">Bank Transfer (EFT)</div>
+                    <div style="font-size: 0.85rem; color: var(--text-muted);">Direct deposit to Digital Infra Account</div>
+                </div>
+            </label>
+        </div>
+
+        <form action="{{ url_for('process_payment', id=invoice.id) }}" method="POST">
+            <div style="margin-bottom: 2rem;">
+                <div class="form-group">
+                    <label>Cardholder Name</label>
+                    <input type="text" placeholder="e.g. Sipho Dlamini" required style="height: 55px;">
+                </div>
+                <div class="form-group">
+                    <label>Card Number</label>
+                    <div style="position: relative;">
+                        <input type="text" placeholder="0000 0000 0000 0000" required style="height: 55px;">
+                        <i class="fas fa-lock" style="position: absolute; right: 1.25rem; top: 1.1rem; color: var(--text-muted);"></i>
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                    <div class="form-group">
+                        <label>Expiry Date</label>
+                        <input type="text" placeholder="MM / YY" required style="height: 55px;">
+                    </div>
+                    <div class="form-group">
+                        <label>CVC / CVV</label>
+                        <input type="text" placeholder="123" required style="height: 55px;">
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary pulse" style="width: 100%; height: 70px; font-size: 1.25rem; font-weight: 900; background: #10b981; border: none; box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);">
+                Confirm Payment of E{{ "{:,.2f}".format(invoice.amount) }} <i class="fas fa-shield-check" style="margin-left: 0.75rem;"></i>
+            </button>
+        </form>
+        
+        <div style="text-align: center; margin-top: 2rem; color: var(--text-muted); font-size: 0.85rem; font-weight: 600;">
+            <i class="fas fa-shield-alt"></i> SSL SECURE 256-BIT ENCRYPTION
+        </div>
+    </div>
+
+    <!-- Invoice Summary -->
+    <div style="position: sticky; top: 2rem;">
+        <div class="card" style="padding: 2.5rem; background: #f8fafc; border: 1px solid var(--border); border-radius: 24px;">
+            <h4 style="font-size: 1.1rem; font-weight: 800; color: var(--text-main); margin-bottom: 2rem; text-transform: uppercase; letter-spacing: 0.05em;">Order Summary</h4>
+            
+            <div style="display: grid; gap: 1.25rem; margin-bottom: 2rem;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.95rem;">
+                    <span style="color: var(--text-muted); font-weight: 500;">Service Category</span>
+                    <span style="font-weight: 700; color: var(--text-main);">{{ invoice.appointment.service_category }}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.95rem;">
+                    <span style="color: var(--text-muted); font-weight: 500;">Base Service Fee</span>
+                    <span style="font-weight: 700; color: var(--text-main);">E{{ "{:,.2f}".format(invoice.service_fee) }}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.95rem;">
+                    <span style="color: var(--text-muted); font-weight: 500;">Transport / Call-out</span>
+                    <span style="font-weight: 700; color: var(--text-main);">E{{ "{:,.2f}".format(invoice.transport_fee) }}</span>
+                </div>
+                {% if invoice.description %}
+                <div style="padding: 1rem; background: white; border-radius: 12px; font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; border: 1px solid var(--border);">
+                    <strong>Notes:</strong> {{ invoice.description }}
+                </div>
+                {% endif %}
+            </div>
+
+            <div style="padding-top: 1.5rem; border-top: 2px dashed var(--border); display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <span style="font-size: 1.25rem; font-weight: 800; color: var(--text-main);">Total Amount</span>
+                <span style="font-size: 2rem; font-weight: 900; color: var(--primary);">E{{ "{:,.2f}".format(invoice.amount) }}</span>
+            </div>
+
+            <div style="background: rgba(37, 99, 235, 0.05); padding: 1.5rem; border-radius: 16px; border: 1px solid rgba(37, 99, 235, 0.1);">
+                <div style="display: flex; gap: 1rem; align-items: center;">
+                    <i class="fas fa-info-circle" style="color: var(--primary); font-size: 1.25rem;"></i>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0; font-weight: 500;">
+                        Currency: <strong>Lilangeni (SZL)</strong>. 
+                        Your receipt will be generated automatically after payment.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div style="margin-top: 2rem; text-align: center;">
+            <a href="{{ url_for('customer_view') }}" style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem; font-weight: 700;">
+                <i class="fas fa-arrow-left"></i> Return to Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

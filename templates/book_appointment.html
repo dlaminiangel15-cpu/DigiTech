@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+
+{% block title %}Book Service{% endblock %}
+{% block header %}Service Request{% endblock %}
+
+{% block head %}
+<style>
+    .upload-area {
+        border: 2px dashed var(--border);
+        border-radius: 16px;
+        padding: 2rem;
+        text-align: center;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        background: #f8fafc;
+    }
+    .upload-area:hover {
+        border-color: var(--primary);
+        background: rgba(37, 99, 235, 0.05);
+    }
+    .upload-preview {
+        display: none;
+        width: 100%;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 12px;
+        margin-top: 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="card animate-up" style="padding: 3rem; max-width: 900px; margin: 0 auto; animation-delay: 0.1s;">
+    <div style="margin-bottom: 3.5rem; text-align: center;">
+        <h2 style="font-size: 2rem; color: var(--text-main); margin-bottom: 0.75rem;">Create a New Service Ticket</h2>
+        <p style="color: var(--text-muted); font-size: 1.1rem; max-width: 600px; margin: 0 auto;">Provide your details below and our technical team will get back to you shortly.</p>
+    </div>
+
+    <form method="POST" enctype="multipart/form-data">
+        <!-- Hidden dummy lat/lng to keep backend happy (optional fields) -->
+        <input type="hidden" name="lat" value="0">
+        <input type="hidden" name="lng" value="0">
+
+        <!-- Personal Information -->
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 2rem;">
+            <div style="width: 40px; height: 40px; background: rgba(37, 99, 235, 0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--primary);">
+                <i class="fas fa-user-shield"></i>
+            </div>
+            <h3 style="font-size: 1.25rem; margin: 0;">Personal Information</h3>
+        </div>
+
+        <div class="form-group">
+            <label>Full Legal Name</label>
+            <div style="position: relative;">
+                <i class="far fa-user" style="position: absolute; left: 1.25rem; top: 1.1rem; color: var(--text-muted);"></i>
+                <input type="text" name="name" placeholder="E.g. Sipho Dlamini" required style="padding-left: 3rem;">
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" name="email" placeholder="sipho@example.sz" required>
+            </div>
+            <div class="form-group">
+                <label>Phone Number</label>
+                <input type="tel" name="phone" placeholder="+268 7600 0000" required>
+            </div>
+        </div>
+
+        <!-- Service Details -->
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-top: 3rem; margin-bottom: 2rem;">
+            <div style="width: 40px; height: 40px; background: rgba(251, 191, 36, 0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--secondary);">
+                <i class="fas fa-cog"></i>
+            </div>
+            <h3 style="font-size: 1.25rem; margin: 0;">Service Details</h3>
+        </div>
+
+        <div class="form-group">
+            <label>Service Category</label>
+            <select name="service_category" required style="height: 55px; font-weight: 600;">
+                <option value="" disabled {% if not selected_service %}selected{% endif %}>Select service type...</option>
+                <option value="UPS and Solar Power Systems" {% if selected_service == 'UPS and Solar Power Systems' %}selected{% endif %}>UPS and Solar Power Systems</option>
+                <option value="ATM Hardware maintenance" {% if selected_service == 'ATM Hardware maintenance' %}selected{% endif %}>ATM Hardware maintenance</option>
+                <option value="Cash deposit Machines Maintenance" {% if selected_service == 'Cash deposit Machines Maintenance' %}selected{% endif %}>Cash deposit Machines Maintenance</option>
+                <option value="CCTV installation" {% if selected_service == 'CCTV installation' %}selected{% endif %}>CCTV installation</option>
+                <option value="Access control system" {% if selected_service == 'Access control system' %}selected{% endif %}>Access control system</option>
+                <option value="Network installation and support" {% if selected_service == 'Network installation and support' %}selected{% endif %}>Network installation and support</option>
+                <option value="Desktop support/ Work station" {% if selected_service == 'Desktop support/ Work station' %}selected{% endif %}>Desktop support/ Work station</option>
+                <option value="Computers and Printers consumables" {% if selected_service == 'Computers and Printers consumables' %}selected{% endif %}>Computers and Printers consumables</option>
+                <option value="Hardware and software maintenance" {% if selected_service == 'Hardware and software maintenance' %}selected{% endif %}>Hardware and software maintenance</option>
+                <option value="Boom gates support and repairs" {% if selected_service == 'Boom gates support and repairs' %}selected{% endif %}>Boom gates support and repairs</option>
+                <option value="Weather station calibration" {% if selected_service == 'Weather station calibration' %}selected{% endif %}>Weather station calibration</option>
+                <option value="Repair of all kinds of electronics" {% if selected_service == 'Repair of all kinds of electronics' %}selected{% endif %}>Repair of all kinds of electronics</option>
+                <option value="Note counter machines Maintenance" {% if selected_service == 'Note counter machines Maintenance' %}selected{% endif %}>Note counter machines Maintenance</option>
+                <option value="IT Consultancy" {% if selected_service == 'IT Consultancy' %}selected{% endif %}>IT Consultancy</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Technical Issue Description</label>
+            <textarea name="issue" rows="4" placeholder="Describe the specific problem or requirement..." required></textarea>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+            <div class="form-group">
+                <label>Preferred Visit Date</label>
+                <input type="date" name="date" value="{{ current_date }}" required min="{{ current_date }}">
+            </div>
+            <div class="form-group">
+                <label>Physical Address / Landmark</label>
+                <textarea name="physical_address" rows="3" placeholder="e.g. Near Manzini Primary main gate, House #42..." required></textarea>
+            </div>
+        </div>
+
+        <!-- Photo Upload -->
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-top: 3rem; margin-bottom: 2rem;">
+            <div style="width: 40px; height: 40px; background: rgba(16, 185, 129, 0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #10b981;">
+                <i class="fas fa-camera"></i>
+            </div>
+            <h3 style="font-size: 1.25rem; margin: 0;">Reference Photo <span style="font-size: 0.85rem; color: var(--text-muted); font-weight: 500;">(Optional)</span></h3>
+        </div>
+
+        <div class="form-group">
+            <input type="file" name="image" id="imageInput" accept="image/*" style="display: none;" onchange="previewImage(this)">
+            <div class="upload-area" onclick="document.getElementById('imageInput').click()">
+                <i class="fas fa-cloud-upload-alt" style="font-size: 2rem; color: var(--primary); margin-bottom: 0.75rem; display: block;"></i>
+                <span style="font-size: 0.9rem; font-weight: 700; color: var(--primary);">Click to Upload a Photo</span>
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.5rem;">Helps our engineers better understand the issue</p>
+                <img id="preview" class="upload-preview">
+            </div>
+        </div>
+
+        <div style="margin-top: 4rem; border-top: 2px solid var(--border); padding-top: 3rem; display: flex; justify-content: flex-end; align-items: center; gap: 2rem;">
+            <a href="{{ url_for('customer_view') }}" style="color: var(--text-muted); font-weight: 700; text-decoration: none; font-size: 0.95rem;">Cancel &amp; Return</a>
+            <button type="submit" class="btn btn-primary" style="padding: 1.25rem 5rem; font-size: 1.1rem;">
+                Submit Request <i class="fas fa-arrow-right" style="margin-left: 0.5rem;"></i>
+            </button>
+        </div>
+    </form>
+</div>
+
+{% block scripts %}
+<script>
+    function previewImage(input) {
+        const preview = document.getElementById('preview');
+        const uploadLabel = document.querySelector('.upload-area span');
+        const uploadIcon = document.querySelector('.upload-area i');
+
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+                uploadLabel.innerText = "Change Photo";
+                uploadIcon.style.display = 'none';
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+</script>
+{% endblock %}
+{% endblock %}

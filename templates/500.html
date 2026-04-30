@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}500 - System Overload{% endblock %}
+
+{% block content %}
+<div class="animate-up" style="display: flex; align-items: center; justify-content: center; min-height: 80vh; width: 100vw; position: fixed; top: 0; left: 0; z-index: 1000; background: url('{{ url_for('static', filename='images/login_bg.png') }}') no-repeat center center fixed; background-size: cover;">
+    <div style="position: absolute; inset: 0; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(8px);"></div>
+    
+    <div style="text-align: center; position: relative; z-index: 1001; max-width: 600px; padding: 2rem;">
+        <i class="fas fa-microchip" style="font-size: 5rem; color: #f87171; margin-bottom: 2rem; filter: drop-shadow(0 0 20px rgba(248, 113, 113, 0.4));"></i>
+        <h1 style="font-size: 4rem; font-weight: 900; color: #f87171; margin: 0; line-height: 1;">500</h1>
+        <h2 style="color: white; font-size: 2rem; margin: 1.5rem 0 1rem;">Core System Failure</h2>
+        <p style="color: rgba(255,255,255,0.6); font-size: 1.1rem; line-height: 1.6; margin-bottom: 3rem;">
+            Our infrastructure is experiencing an unexpected internal disruption. Our engineers have been notified and are working to restore normal operations.
+        </p>
+        <div style="display: flex; gap: 1.5rem; justify-content: center;">
+            <a href="javascript:location.reload()" class="btn btn-outline" style="color: white; border-color: rgba(255,255,255,0.2); padding: 1rem 2rem;">
+                <i class="fas fa-sync"></i> Retry System
+            </a>
+            <a href="{{ url_for('index') }}" class="btn btn-primary" style="padding: 1rem 2rem;">
+                Contact Support <i class="fas fa-headset" style="margin-left: 0.5rem;"></i>
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
