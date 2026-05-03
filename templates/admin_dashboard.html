@@ -30,9 +30,18 @@
 <div style="display: grid; grid-template-columns: 2.5fr 1fr; gap: 2.5rem; margin-top: 1rem;">
     <!-- Main Tasks View -->
     <div class="card animate-up" style="animation-delay: 0.2s; padding: 2.5rem;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.5rem;">
-            <h3 style="font-size: 1.5rem;"><i class="fas fa-list-ul" style="color: var(--primary); margin-right: 0.75rem;"></i> Service Request Queue</h3>
-            <span class="badge badge-completed">{{ appointments|length }} Requests Total</span>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.5rem; flex-wrap: wrap; gap: 1.5rem;">
+            <div>
+                <h3 style="font-size: 1.5rem; margin-bottom: 0.25rem;"><i class="fas fa-list-ul" style="color: var(--primary); margin-right: 0.75rem;"></i> Service Request Queue</h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">Monitor and dispatch technical resources.</p>
+            </div>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <div style="position: relative;">
+                    <i class="fas fa-filter" style="position: absolute; left: 1rem; top: 0.85rem; color: var(--text-muted); font-size: 0.8rem; z-index: 5;"></i>
+                    <input type="text" id="admin-date-filter" placeholder="Filter by date..." style="padding: 0.7rem 1rem 0.7rem 2.5rem; border-radius: 12px; border: 1px solid var(--border); font-size: 0.85rem; width: 220px; background: white; cursor: pointer;">
+                </div>
+                <span class="badge badge-completed" style="height: 38px; display: flex; align-items: center;">{{ appointments|length }} Requests Total</span>
+            </div>
         </div>
         
         <div class="table-container">
@@ -265,6 +274,18 @@
     }
     
     function closeModal() { document.getElementById('mapModal').style.display = 'none'; }
+
+    // Initialize Flatpickr for Filtering
+    flatpickr("#admin-date-filter", {
+        mode: "range",
+        dateFormat: "Y-m-d",
+        altInput: true,
+        altFormat: "M j, Y",
+        onChange: function(selectedDates, dateStr, instance) {
+            // Logic to filter table rows can be added here
+            console.log("Filter dates selected:", dateStr);
+        }
+    });
 </script>
 {% endblock %}
 {% endblock %}

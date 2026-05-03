@@ -8,6 +8,21 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css">
+    <style>
+        .flatpickr-calendar {
+            background: var(--nav-bg) !important;
+            border: 1px solid rgba(255,255,255,0.1) !important;
+            box-shadow: var(--shadow-premium) !important;
+            border-radius: 16px !important;
+        }
+        .flatpickr-day.selected {
+            background: var(--accent) !important;
+            border-color: var(--accent) !important;
+            color: black !important;
+        }
+    </style>
     <style>
         @keyframes circuitMove {
             0% { stroke-dashoffset: 100; }
@@ -60,10 +75,10 @@
                     </div>
                 </div>
             {% else %}
-                <a href="{{ url_for('customer_view') }}" class="btn-contact">
+                <button onclick="openContactModal()" class="btn-contact" style="border: none; cursor: pointer;">
                     <i class="far fa-comment-dots"></i>
                     Contact me
-                </a>
+                </button>
             {% endif %}
         </div>
     </nav>
@@ -165,8 +180,56 @@
         </footer>
     </main>
 
+    <!-- Contact Modal -->
+    <div id="contactModal" style="display:none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.9); z-index: 3000; align-items: center; justify-content: center; backdrop-filter: blur(12px);">
+        <div class="card animate-up" style="max-width: 550px; width: 95%; padding: 0; overflow: hidden; border: none; box-shadow: 0 40px 80px rgba(0,0,0,0.5);">
+            <div style="padding: 2.5rem; background: var(--nav-bg); color: white; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h3 style="margin: 0; font-size: 1.5rem;">Get in Touch</h3>
+                    <p style="margin: 0.5rem 0 0 0; font-size: 0.85rem; color: rgba(255,255,255,0.6);">We respond within 2 business hours.</p>
+                </div>
+                <button onclick="closeContactModal()" style="background: none; border: none; color: white; font-size: 2.5rem; cursor: pointer; line-height: 1;">&times;</button>
+            </div>
+            <div style="padding: 3rem;">
+                <div style="display: flex; flex-direction: column; gap: 2rem; margin-bottom: 3rem;">
+                    <div style="display: flex; align-items: center; gap: 1.5rem;">
+                        <div style="width: 50px; height: 50px; background: #f8fafc; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 1.25rem; border: 1px solid var(--border);">
+                            <i class="fas fa-phone-alt"></i>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.75rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Direct Line</div>
+                            <div style="font-weight: 700; color: var(--text-main);">(+268) 7 693 6935</div>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 1.5rem;">
+                        <div style="width: 50px; height: 50px; background: #f8fafc; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 1.25rem; border: 1px solid var(--border);">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.75rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Support Email</div>
+                            <div style="font-weight: 700; color: var(--text-main);">support@digitalinfrastructure.co.za</div>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 1.5rem;">
+                        <div style="width: 50px; height: 50px; background: #f8fafc; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 1.25rem; border: 1px solid var(--border);">
+                            <i class="fas fa-map-marked-alt"></i>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.75rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Visit Us</div>
+                            <div style="font-weight: 700; color: var(--text-main);">Manzini Industrial Site, Eswatini</div>
+                        </div>
+                    </div>
+                </div>
+                <button onclick="window.location.href='tel:+26876936935'" class="btn btn-primary" style="width: 100%; height: 60px; font-weight: 800; border-radius: 16px;">
+                    <i class="fas fa-phone-alt" style="margin-right: 0.5rem;"></i> Call Technical Team Now
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Global SDKs -->
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
     <script>
         // Notification Logic with better UI
@@ -229,7 +292,11 @@
             if (typeof pageInitMap === 'function') pageInitMap();
         };
 
-        // ── Mobile Sidebar Toggle ────────────────────────────────
+        // --- Modal Logics ---
+        function openContactModal() { document.getElementById('contactModal').style.display = 'flex'; }
+        function closeContactModal() { document.getElementById('contactModal').style.display = 'none'; }
+        
+        // --- Mobile Sidebar Toggle ────────────────────────────────
         const sidebar   = document.querySelector('.sidebar');
         const overlay   = document.getElementById('sidebar-overlay');
         const hamburger = document.getElementById('hamburger');

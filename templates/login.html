@@ -1,56 +1,87 @@
 {% extends "base.html" %}
 
-{% block title %}Staff Login{% endblock %}
+{% block title %}Staff Portal | Access Control{% endblock %}
 
 {% block content %}
-<div class="animate-up" style="display: flex; align-items: center; justify-content: center; min-height: 100vh; width: 100vw; position: fixed; top: 0; left: 0; z-index: 1000; background: url('{{ url_for('static', filename='images/login_bg.png') }}') no-repeat center center fixed; background-size: cover; animation-delay: 0.1s;">
-    <!-- Overlay for better contrast -->
-    <div style="position: absolute; inset: 0; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(5px);"></div>
-    
-    <div class="card" style="width: 100%; max-width: 480px; padding: 4rem; border: 1px solid rgba(255,255,255,0.1); border-top: 5px solid var(--primary); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 30px rgba(26, 79, 160, 0.2); position: relative; z-index: 1001; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(20px); border-radius: 24px; color: white;">
-        <div style="text-align: center; margin-bottom: 3rem;">
-            <div style="background: linear-gradient(135deg, var(--primary), var(--primary-dark)); width: 80px; height: 80px; border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 2rem; box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3);">
-                <i class="fas fa-shield-alt" style="font-size: 2.5rem; color: white;"></i>
+<div class="animate-up" style="display: flex; align-items: center; justify-content: center; min-height: 85vh; padding: 2rem;">
+    <div class="card" style="display: grid; grid-template-columns: 1fr 1.2fr; max-width: 1100px; width: 100%; padding: 0; overflow: hidden; border: none; box-shadow: 0 50px 100px -20px rgba(0,0,0,0.25); border-radius: 32px; background: white;">
+        
+        <!-- Left Side: Visual/Branding -->
+        <div style="background: linear-gradient(135deg, var(--nav-bg) 0%, var(--primary-dark) 100%); padding: 5rem; display: flex; flex-direction: column; justify-content: center; color: white; position: relative; overflow: hidden;">
+            <div style="position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; background: rgba(250, 204, 21, 0.1); border-radius: 50%; filter: blur(50px);"></div>
+            <div style="position: absolute; bottom: -50px; left: -50px; width: 300px; height: 300px; background: rgba(26, 79, 160, 0.2); border-radius: 50%; filter: blur(80px);"></div>
+            
+            <div style="position: relative; z-index: 2;">
+                <div class="logo" style="margin-bottom: 3rem;">
+                    <div class="logo-icon" style="width: 50px; height: 50px; font-size: 1.5rem; border-radius: 12px;">DI</div>
+                    <span class="logo-text-brand" style="font-size: 1.2rem; color: white;">Digital Infrastructures</span>
+                </div>
+                
+                <h1 style="font-size: 3rem; font-weight: 900; line-height: 1.1; margin-bottom: 1.5rem; color: white;">Secure<br><span style="color: var(--accent);">Personnel</span><br>Gateway</h1>
+                <p style="font-size: 1.1rem; color: rgba(255,255,255,0.6); line-height: 1.6; font-weight: 500; max-width: 320px;">
+                    Access your operational dashboard, manage dispatch tickets, and track field execution in real-time.
+                </p>
             </div>
-            <h2 style="font-weight: 900; font-size: 2rem; color: white; letter-spacing: -0.025em; margin: 0;">Staff Gateway</h2>
-            <p style="color: rgba(255,255,255,0.6); margin-top: 0.75rem; font-weight: 500; font-size: 1rem;">Authorized Personnel Only</p>
+            
+            <div style="margin-top: 5rem; display: flex; gap: 1rem; position: relative; z-index: 2;">
+                <div style="padding: 1rem; background: rgba(255,255,255,0.05); border-radius: 16px; border: 1px solid rgba(255,255,255,0.1);">
+                    <i class="fas fa-fingerprint" style="font-size: 1.5rem; color: var(--accent);"></i>
+                    <div style="font-size: 0.7rem; font-weight: 800; margin-top: 0.5rem; text-transform: uppercase;">Encrypted</div>
+                </div>
+                <div style="padding: 1rem; background: rgba(255,255,255,0.05); border-radius: 16px; border: 1px solid rgba(255,255,255,0.1);">
+                    <i class="fas fa-user-shield" style="font-size: 1.5rem; color: var(--accent);"></i>
+                    <div style="font-size: 0.7rem; font-weight: 800; margin-top: 0.5rem; text-transform: uppercase;">Authorized</div>
+                </div>
+            </div>
         </div>
 
-        {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="animate-up" style="padding: 1.25rem; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 12px; color: #fca5a5; margin-bottom: 2rem; font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 0.75rem;">
-                        <i class="fas fa-exclamation-circle"></i> {{ message }}
+        <!-- Right Side: Login Form -->
+        <div style="padding: 6rem; background: #fff; display: flex; flex-direction: column; justify-content: center;">
+            <div style="margin-bottom: 4rem;">
+                <h2 style="font-size: 2.25rem; font-weight: 900; color: var(--text-main); margin-bottom: 0.5rem;">Welcome Back</h2>
+                <p style="color: var(--text-muted); font-weight: 600;">Please enter your credentials to continue</p>
+            </div>
+
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="animate-up" style="padding: 1.25rem; background: #fef2f2; border: 1px solid #fee2e2; border-radius: 16px; color: #991b1b; margin-bottom: 2.5rem; font-size: 0.95rem; font-weight: 700; display: flex; align-items: center; gap: 0.75rem;">
+                            <i class="fas fa-exclamation-triangle"></i> {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form method="POST">
+                <div class="form-group" style="margin-bottom: 2rem;">
+                    <label style="color: var(--text-main); font-weight: 800; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em;">System Email</label>
+                    <div style="position: relative; margin-top: 0.75rem;">
+                        <i class="far fa-envelope" style="position: absolute; left: 1.5rem; top: 1.25rem; color: var(--text-muted);"></i>
+                        <input type="email" name="email" autocomplete="username" placeholder="name@digitalinfrastructure.co.za" required 
+                               style="padding-left: 3.5rem; height: 65px; border-radius: 16px; border: 2px solid #f1f5f9; background: #f8fafc; font-weight: 600; font-size: 1rem;">
                     </div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-
-        <form method="POST">
-            <div class="form-group">
-                <label style="color: rgba(255,255,255,0.8);">System Email</label>
-                <div style="position: relative;">
-                    <i class="far fa-user" style="position: absolute; left: 1.25rem; top: 1.1rem; color: rgba(255,255,255,0.4);"></i>
-                    <input type="email" name="email" autocomplete="username" placeholder="staff@digitech.pro" required style="padding-left: 3rem; height: 55px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white;">
                 </div>
-            </div>
-            <div class="form-group">
-                <label style="color: rgba(255,255,255,0.8);">Security Key</label>
-                <div style="position: relative;">
-                    <i class="fas fa-lock" style="position: absolute; left: 1.25rem; top: 1.1rem; color: rgba(255,255,255,0.4);"></i>
-                    <input type="password" name="password" autocomplete="current-password" placeholder="••••••••" required style="padding-left: 3rem; height: 55px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white;">
+                <div class="form-group" style="margin-bottom: 3rem;">
+                    <label style="color: var(--text-main); font-weight: 800; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em;">Access Token</label>
+                    <div style="position: relative; margin-top: 0.75rem;">
+                        <i class="fas fa-key" style="position: absolute; left: 1.5rem; top: 1.25rem; color: var(--text-muted);"></i>
+                        <input type="password" name="password" autocomplete="current-password" placeholder="••••••••" required 
+                               style="padding-left: 3.5rem; height: 65px; border-radius: 16px; border: 2px solid #f1f5f9; background: #f8fafc; font-weight: 600; font-size: 1rem;">
+                    </div>
                 </div>
-            </div>
-            <button type="submit" class="btn btn-primary" style="width: 100%; height: 60px; font-size: 1.1rem; margin-top: 1.5rem; background: var(--primary); box-shadow: 0 10px 20px rgba(26, 79, 160, 0.3);">
-                Access Control Center <i class="fas fa-chevron-right" style="margin-left: 0.5rem;"></i>
-            </button>
-        </form>
+                
+                <button type="submit" class="btn btn-primary" style="width: 100%; height: 70px; font-size: 1.15rem; font-weight: 800; border-radius: 18px; background: var(--nav-bg); box-shadow: 0 15px 30px rgba(15, 23, 42, 0.25); display: flex; align-items: center; justify-content: center; gap: 0.75rem;">
+                    Authenticate Identity <i class="fas fa-arrow-right"></i>
+                </button>
+            </form>
 
-        <div style="text-align: center; margin-top: 3.5rem; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.1);">
-            <p style="color: rgba(255,255,255,0.4); font-size: 0.9rem; font-weight: 500;">
-                Digital Infrastructures Investment PTY LTD
-            </p>
+            <div style="margin-top: 5rem; text-align: center;">
+                <a href="/" style="color: var(--text-muted); text-decoration: none; font-weight: 700; font-size: 0.9rem; transition: color 0.3s ease;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--text-muted)'">
+                    <i class="fas fa-chevron-left" style="margin-right: 0.5rem; font-size: 0.8rem;"></i> Return to Public Site
+                </a>
+            </div>
         </div>
     </div>
 </div>
 {% endblock %}
+
