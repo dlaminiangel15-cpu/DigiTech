@@ -105,12 +105,13 @@ def book_appointment():
         
         issue = request.form['issue']
         service_category = request.form.get('service_category')
-        preferred_date_str = request.form['date']
+        preferred_date_str = request.form.get('date', '')
+        
         try:
             preferred_date = datetime.strptime(preferred_date_str, '%Y-%m-%d').date()
         except ValueError:
-            # Fallback for Flatpickr altFormat (e.g. "May 3, 2026")
-            preferred_date = datetime.strptime(preferred_date_str, '%B %d, %Y').date()
+            flash('Please select a valid preferred visit date.', 'error')
+            return redirect(url_for('book_appointment', service=service_category))
 
         # Location is now text-based only; lat/lng default to 0
         lat = 0.0

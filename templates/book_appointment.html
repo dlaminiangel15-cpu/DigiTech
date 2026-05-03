@@ -207,7 +207,7 @@
         <div class="step-node" id="node-3">3 <span class="step-label">Job Details</span></div>
     </div>
 
-    <form id="bookingForm" method="POST" enctype="multipart/form-data">
+    <form id="bookingForm" method="POST" enctype="multipart/form-data" onsubmit="return validateSubmission()">
         <input type="hidden" name="lat" value="0">
         <input type="hidden" name="lng" value="0">
 
@@ -339,8 +339,21 @@
         dateFormat: "Y-m-d",
         altInput: true,
         altFormat: "F j, Y",
-        disableMobile: "true"
+        disableMobile: true
     });
+
+    function validateSubmission() {
+        const dateInput = document.getElementById('calendar-input');
+        if (!dateInput.value) {
+            const toast = document.createElement('div');
+            toast.style = "position:fixed; bottom:2rem; left:50%; transform:translateX(-50%); background:var(--danger); color:white; padding:1rem 2rem; border-radius:12px; font-weight:800; z-index:9999; box-shadow:var(--shadow-lg);";
+            toast.innerText = "Please select a preferred visit date before submitting.";
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 4000);
+            return false;
+        }
+        return true;
+    }
 
     let currentStep = 1;
 
