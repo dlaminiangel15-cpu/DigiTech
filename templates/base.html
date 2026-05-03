@@ -97,7 +97,7 @@
                         <i class="fas fa-phone" style="color:var(--primary-light);"></i>
                         <div>
                             <div style="color:rgba(255,255,255,0.5);font-size:0.72rem;">Support Line</div>
-                            <div style="color:white;font-weight:700;font-size:0.82rem;">+268 7621 6888</div>
+                            <div style="color:white;font-weight:700;font-size:0.8rem; line-height: 1.4;">(+268) 3 502 9861<br>(+268) 7 693 6935</div>
                         </div>
                     </div>
                 {% endif %}
@@ -174,7 +174,10 @@
                     </p>
                 </div>
                 <div class="animate-up" style="animation-delay: 0.3s;">
-                    <h5 style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 1.5rem; color: var(--text-main); font-weight: 800;">Get in Touch</h5>
+                    <p style="font-size: 0.85rem; margin-bottom: 0.75rem; color: var(--text-muted); font-weight: 500;">
+                        <i class="fas fa-phone" style="color: var(--primary); margin-right: 0.75rem;"></i>
+                        (+268) 3 502 9861 / 7 693 6935
+                    </p>
                     <p style="font-size: 0.85rem; margin-bottom: 0.75rem; color: var(--text-muted); font-weight: 500;">
                         <i class="fas fa-envelope-open-text" style="color: var(--primary); margin-right: 0.75rem;"></i>
                         accounts@digitalinfrastructure.co.za
@@ -193,9 +196,6 @@
 
     <!-- Global SDKs -->
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
-    {% if google_maps_api_key %}
-        <script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&callback=initMap" async defer></script>
-    {% endif %}
 
     <script>
         // Notification Logic with better UI

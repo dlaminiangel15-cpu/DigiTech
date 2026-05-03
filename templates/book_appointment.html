@@ -206,17 +206,17 @@
                 <label>Full Legal Name</label>
                 <div style="position: relative;">
                     <i class="far fa-user" style="position: absolute; left: 1.25rem; top: 1.1rem; color: var(--text-muted);"></i>
-                    <input type="text" name="name" id="client_name" placeholder="E.g. Sipho Dlamini" required style="padding-left: 3rem; height: 60px;">
+                    <input type="text" name="name" id="client_name" autocomplete="name" placeholder="E.g. Sipho Dlamini" required style="padding-left: 3rem; height: 60px;">
                 </div>
             </div>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
                 <div class="form-group">
                     <label>Email Address</label>
-                    <input type="email" name="email" id="client_email" placeholder="sipho@example.sz" required style="height: 60px;">
+                    <input type="email" name="email" id="client_email" autocomplete="email" placeholder="sipho@example.sz" required style="height: 60px;">
                 </div>
                 <div class="form-group">
                     <label>Phone Number</label>
-                    <input type="tel" name="phone" id="client_phone" placeholder="+268 7600 0000" required style="height: 60px;">
+                    <input type="tel" name="phone" id="client_phone" autocomplete="tel" placeholder="+268 7600 0000" required style="height: 60px;">
                 </div>
             </div>
             <div style="margin-top: 3rem; display: flex; justify-content: flex-end;">
@@ -231,27 +231,27 @@
             <h3 class="form-section-title">What service do you require?</h3>
             <div class="service-selection-grid">
                 {% set services = [
-                    ('UPS and Solar Power Systems', 'fa-solar-panel', 'solar.png'),
-                    ('ATM Hardware maintenance', 'fa-money-bill-wave', 'atm.png'),
-                    ('Cash deposit Machines Maintenance', 'fa-vault', 'atm.png'),
-                    ('CCTV installation', 'fa-video', 'security.png'),
-                    ('Access control system', 'fa-id-card-clip', 'security.png'),
-                    ('Network installation and support', 'fa-network-wired', 'it.png'),
-                    ('Desktop support/ Work station', 'fa-desktop', 'it.png'),
-                    ('Computers and Printers consumables', 'fa-print', 'it.png'),
-                    ('Hardware and software maintenance', 'fa-microchip', 'it.png'),
-                    ('Boom gates support and repairs', 'fa-door-open', 'security.png'),
-                    ('Weather station calibration', 'fa-cloud-sun', 'solar.png'),
-                    ('Repair of all kinds of electronics', 'fa-plug', 'it.png'),
-                    ('Note counter machines Maintenance', 'fa-coins', 'atm.png'),
-                    ('IT Consultancy', 'fa-user-tie', 'it.png')
+                    ('UPS and Solar Power Systems', 'fa-solar-panel', 'solar.png', ''),
+                    ('ATM Hardware maintenance', 'fa-money-bill-wave', 'atm.png', ''),
+                    ('Cash deposit Machines Maintenance', 'fa-vault', 'atm.png', 'hue-rotate(90deg)'),
+                    ('CCTV installation', 'fa-video', 'security.png', ''),
+                    ('Access control system', 'fa-id-card-clip', 'security.png', 'hue-rotate(120deg)'),
+                    ('Network installation and support', 'fa-network-wired', 'it.png', ''),
+                    ('Desktop support/ Work station', 'fa-desktop', 'it.png', 'hue-rotate(60deg)'),
+                    ('Computers and Printers consumables', 'fa-print', 'it.png', 'hue-rotate(150deg)'),
+                    ('Hardware and software maintenance', 'fa-microchip', 'it.png', 'hue-rotate(210deg)'),
+                    ('Boom gates support and repairs', 'fa-door-open', 'security.png', 'hue-rotate(240deg)'),
+                    ('Weather station calibration', 'fa-cloud-sun', 'solar.png', 'hue-rotate(180deg)'),
+                    ('Repair of all kinds of electronics', 'fa-plug', 'it.png', 'hue-rotate(300deg)'),
+                    ('Note counter machines Maintenance', 'fa-coins', 'atm.png', 'hue-rotate(270deg)'),
+                    ('IT Consultancy', 'fa-user-tie', 'login_bg.png', 'brightness(0.8)')
                 ] %}
-                {% for label, icon, img in services %}
+                {% for label, icon, img, filt in services %}
                 <label>
                     <input type="radio" name="service_category" value="{{ label }}" class="service-card-input" 
                            {% if selected_service == label %}checked{% endif %} required>
                     <div class="service-card-ui">
-                        <div class="service-card-image" style="background-image: url('{{ url_for('static', filename='images/' + img) }}')"></div>
+                        <div class="service-card-image" style="background-image: url('{{ url_for('static', filename='images/' + img) }}'); filter: {{ filt }};"></div>
                         <div class="service-card-content">
                             <i class="fas {{ icon }}"></i>
                             <span>{{ label }}</span>
@@ -351,9 +351,12 @@
                 const checked = container.querySelector(`input[name="${input.name}"]:checked`);
                 if (!checked) {
                     valid = false;
-                    input.closest('.service-selection-grid').style.border = '1px solid var(--danger)';
-                    input.closest('.service-selection-grid').style.borderRadius = '20px';
-                    input.closest('.service-selection-grid').style.padding = '10px';
+                    const selectionGrid = input.closest('.service-selection-grid');
+                    if (selectionGrid) {
+                        selectionGrid.style.border = '1px solid var(--danger)';
+                        selectionGrid.style.borderRadius = '20px';
+                        selectionGrid.style.padding = '10px';
+                    }
                 }
             } else if (!input.value.trim()) {
                 valid = false;

@@ -65,7 +65,7 @@
                 </div>
 
                 {% if job.status != 'Completed' %}
-                <form action="{{ url_for('update_status', id=job.id) }}" method="POST">
+                <form action="{{ url_for('update_engineer_status', id=job.id) }}" method="POST">
                     <div class="form-group">
                         <label>Update Job Status</label>
                         <select name="status" id="status-{{ job.id }}" onchange="toggleSignature({{ job.id }})" required style="height: 55px; font-weight: 700;">
