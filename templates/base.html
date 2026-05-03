@@ -7,7 +7,7 @@
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
     <style>
         @keyframes circuitMove {
             0% { stroke-dashoffset: 100; }
@@ -18,17 +18,11 @@
 </head>
 <body>
     <nav class="top-nav">
-        <a href="/" class="logo" style="background: none; border: none; padding: 0; margin-right: 0.5rem;">
-            <svg width="28" height="28" viewBox="0 0 100 100">
-                <path d="M25 15 H60 C80 15 90 30 90 50 C90 70 80 85 60 85 H25 V15" fill="var(--primary-light)" />
-                <path d="M0 40 H45" stroke="white" stroke-width="5" stroke-linecap="round" stroke-dasharray="50" stroke-dashoffset="50" style="animation: circuitMove 2.5s infinite ease-in-out;" />
-            </svg>
-            <div style="font-size: 0.75rem; color: white; font-weight: 900; line-height: 1.1; display: none;" class="logo-text">
-                DIGITAL INFRASTRUCTURES
-            </div>
-        </a>
+        <div class="nav-left">
+            <a href="/" class="logo">W</a>
+        </div>
 
-        <div style="display: flex; align-items: center; gap: 1rem;">
+        <div class="nav-center">
             <ul class="nav-links">
                 {% if current_user.is_authenticated %}
                     {% if current_user.role == 'admin' %}
@@ -46,29 +40,28 @@
                 {% else %}
                     <li class="nav-item"><a href="{{ url_for('customer_view') }}" class="nav-link {% if request.endpoint == 'customer_view' %}active{% endif %}">Support</a></li>
                     <li class="nav-item"><a href="{{ url_for('book_appointment') }}" class="nav-link {% if request.endpoint == 'book_appointment' %}active{% endif %}">New Booking</a></li>
-                    <li class="nav-divider"></li>
                     <li class="nav-item"><a href="{{ url_for('login') }}" class="nav-link">Staff Login</a></li>
                 {% endif %}
             </ul>
+        </div>
 
-            <div style="display: flex; align-items: center; gap: 0.75rem; padding-left: 0.75rem; border-left: 1px solid rgba(255,255,255,0.15);">
-                {% if current_user.is_authenticated %}
-                    <div style="display: flex; align-items: center; gap: 0.75rem;">
-                        <div style="text-align: right; line-height: 1.2;">
-                            <div style="color: white; font-weight: 700; font-size: 0.8rem;">{{ current_user.name }}</div>
-                            <div style="color: rgba(255,255,255,0.5); font-size: 0.65rem; text-transform: uppercase;">{{ current_user.role }}</div>
-                        </div>
-                        <div style="width: 32px; height: 32px; background: var(--primary-light); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 900; font-size: 0.8rem;">
-                            {{ current_user.name[0].upper() }}
-                        </div>
+        <div class="nav-right">
+            {% if current_user.is_authenticated %}
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <div style="text-align: right; line-height: 1.2;">
+                        <div style="color: white; font-weight: 700; font-size: 0.8rem;">{{ current_user.name }}</div>
+                        <div style="color: rgba(255,255,255,0.5); font-size: 0.65rem; text-transform: uppercase;">{{ current_user.role }}</div>
                     </div>
-                {% else %}
-                    <div style="display: flex; align-items: center; gap: 0.5rem; color: rgba(255,255,255,0.7); font-size: 0.75rem;">
-                        <i class="fas fa-phone-alt" style="color: var(--primary-light);"></i>
-                        <span style="font-weight: 600;">(+268) 7 693 6935</span>
+                    <div style="width: 32px; height: 32px; background: var(--accent); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: black; font-weight: 900; font-size: 0.8rem;">
+                        {{ current_user.name[0].upper() }}
                     </div>
-                {% endif %}
-            </div>
+                </div>
+            {% else %}
+                <a href="{{ url_for('customer_view') }}" class="btn-contact">
+                    <i class="far fa-comment-dots"></i>
+                    Contact me
+                </a>
+            {% endif %}
         </div>
     </nav>
 
