@@ -17,88 +17,55 @@
     {% block head %}{% endblock %}
 </head>
 <body>
-    <nav class="sidebar">
-        <a href="/" class="logo" style="flex-direction: column; align-items: flex-start; gap: 0; display: flex; margin-bottom: 3rem; text-decoration: none; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); padding: 1rem; border-radius: 14px;">
-            <svg width="40" height="40" viewBox="0 0 100 100" style="margin-bottom: 10px;">
+    <nav class="top-nav">
+        <a href="/" class="logo" style="background: none; border: none; padding: 0; margin-right: 0.5rem;">
+            <svg width="28" height="28" viewBox="0 0 100 100">
                 <path d="M25 15 H60 C80 15 90 30 90 50 C90 70 80 85 60 85 H25 V15" fill="var(--primary-light)" />
-                <path d="M35 25 H60 C75 25 80 35 80 50 C80 65 75 75 60 75 H35 V25" fill="white" opacity="0.15"/>
-                <path d="M0 40 H45" stroke="white" stroke-width="4" stroke-linecap="round" stroke-dasharray="50" stroke-dashoffset="50" style="animation: circuitMove 2.5s infinite ease-in-out;" />
-                <path d="M0 52 H50" stroke="white" stroke-width="4" stroke-linecap="round" stroke-dasharray="55" stroke-dashoffset="55" style="animation: circuitMove 2.5s infinite ease-in-out 0.4s;" />
-                <path d="M0 64 H45" stroke="white" stroke-width="4" stroke-linecap="round" stroke-dasharray="50" stroke-dashoffset="50" style="animation: circuitMove 2.5s infinite ease-in-out 0.8s;" />
+                <path d="M0 40 H45" stroke="white" stroke-width="5" stroke-linecap="round" stroke-dasharray="50" stroke-dashoffset="50" style="animation: circuitMove 2.5s infinite ease-in-out;" />
             </svg>
-            <div style="font-size: 0.9rem; color: white; font-weight: 900; line-height: 1.2;">DIGITAL</div>
-            <div style="font-size: 0.9rem; color: white; font-weight: 900; line-height: 1.2;">INFRASTRUCTURES</div>
-            <div style="font-size: 0.55rem; letter-spacing: 0.18em; color: rgba(255,255,255,0.5); font-weight: 700; margin-top: 4px;">INVESTMENT PTY LTD</div>
+            <div style="font-size: 0.75rem; color: white; font-weight: 900; line-height: 1.1; display: none;" class="logo-text">
+                DIGITAL INFRASTRUCTURES
+            </div>
         </a>
 
-        <ul class="nav-links">
-            {% if current_user.is_authenticated %}
-                {% if current_user.role == 'admin' %}
-                    <li class="nav-item">
-                        <a href="{{ url_for('admin_dashboard') }}" class="nav-link {% if request.endpoint == 'admin_dashboard' %}active{% endif %}">
-                            <i class="fas fa-th-large"></i> <span>Dispatcher</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ url_for('manage_technicians') }}" class="nav-link {% if request.endpoint == 'manage_technicians' %}active{% endif %}">
-                            <i class="fas fa-users-cog"></i> <span>Staff Management</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ url_for('payroll') }}" class="nav-link {% if request.endpoint == 'payroll' %}active{% endif %}">
-                            <i class="fas fa-money-check-alt"></i> <span>Payroll</span>
-                        </a>
-                    </li>
-                {% elif current_user.role == 'engineer' %}
-                    <li class="nav-item">
-                        <a href="{{ url_for('engineer_dashboard') }}" class="nav-link {% if request.endpoint == 'engineer_dashboard' %}active{% endif %}">
-                            <i class="fas fa-tools"></i> <span>Service Jobs</span>
-                        </a>
-                    </li>
-                {% endif %}
-                <hr class="nav-divider">
-                <li class="nav-item">
-                    <a href="{{ url_for('logout') }}" class="nav-link" style="color: #f87171;">
-                        <i class="fas fa-sign-out-alt"></i> <span>Log Out</span>
-                    </a>
-                </li>
-            {% else %}
-                <li class="nav-item">
-                    <a href="{{ url_for('customer_view') }}" class="nav-link {% if request.endpoint == 'customer_view' %}active{% endif %}">
-                        <i class="fas fa-headset"></i> <span>Support Center</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ url_for('book_appointment') }}" class="nav-link {% if request.endpoint == 'book_appointment' %}active{% endif %}">
-                        <i class="fas fa-plus-circle"></i> <span>New Booking</span>
-                    </a>
-                </li>
-                <hr class="nav-divider">
-                <li class="nav-item">
-                    <a href="{{ url_for('login') }}" class="nav-link {% if request.endpoint == 'login' %}active{% endif %}">
-                        <i class="fas fa-sign-in-alt"></i> <span>Staff Login</span>
-                    </a>
-                </li>
-            {% endif %}
-        </ul>
-
-        <div style="position: absolute; bottom: 2rem; left: 1rem; right: 1rem;">
-            <div style="background: rgba(255,255,255,0.05); padding: 1rem 1.25rem; border-radius: 12px; font-size: 0.8rem; border: 1px solid rgba(255,255,255,0.08);">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <ul class="nav-links">
                 {% if current_user.is_authenticated %}
-                    <div style="display:flex; align-items:center; gap:0.6rem;">
-                        <div style="width:32px;height:32px;background:var(--primary);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:900;font-size:0.85rem;">{{ current_user.name[0].upper() }}</div>
-                        <div>
-                            <div style="color:white;font-weight:700;font-size:0.82rem;">{{ current_user.name }}</div>
-                            <div style="color:rgba(255,255,255,0.4);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.05em;">{{ current_user.role }}</div>
+                    {% if current_user.role == 'admin' %}
+                        <li class="nav-item"><a href="{{ url_for('admin_dashboard') }}" class="nav-link {% if request.endpoint == 'admin_dashboard' %}active{% endif %}">Dispatcher</a></li>
+                        <li class="nav-item"><a href="{{ url_for('manage_technicians') }}" class="nav-link {% if request.endpoint == 'manage_technicians' %}active{% endif %}">Personnel</a></li>
+                        <li class="nav-item"><a href="{{ url_for('payroll') }}" class="nav-link {% if request.endpoint == 'payroll' %}active{% endif %}">Payroll</a></li>
+                        <li class="nav-item"><a href="{{ url_for('system_qr') }}" class="nav-link {% if request.endpoint == 'system_qr' %}active{% endif %}">Gateway</a></li>
+                    {% elif current_user.role == 'engineer' %}
+                        <li class="nav-item"><a href="{{ url_for('engineer_dashboard') }}" class="nav-link {% if request.endpoint == 'engineer_dashboard' %}active{% endif %}">Jobs</a></li>
+                    {% endif %}
+                    <li class="nav-divider"></li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('logout') }}" class="nav-link" style="color: #f87171;"><i class="fas fa-sign-out-alt"></i></a>
+                    </li>
+                {% else %}
+                    <li class="nav-item"><a href="{{ url_for('customer_view') }}" class="nav-link {% if request.endpoint == 'customer_view' %}active{% endif %}">Support</a></li>
+                    <li class="nav-item"><a href="{{ url_for('book_appointment') }}" class="nav-link {% if request.endpoint == 'book_appointment' %}active{% endif %}">New Booking</a></li>
+                    <li class="nav-divider"></li>
+                    <li class="nav-item"><a href="{{ url_for('login') }}" class="nav-link">Staff Login</a></li>
+                {% endif %}
+            </ul>
+
+            <div style="display: flex; align-items: center; gap: 0.75rem; padding-left: 0.75rem; border-left: 1px solid rgba(255,255,255,0.15);">
+                {% if current_user.is_authenticated %}
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <div style="text-align: right; line-height: 1.2;">
+                            <div style="color: white; font-weight: 700; font-size: 0.8rem;">{{ current_user.name }}</div>
+                            <div style="color: rgba(255,255,255,0.5); font-size: 0.65rem; text-transform: uppercase;">{{ current_user.role }}</div>
+                        </div>
+                        <div style="width: 32px; height: 32px; background: var(--primary-light); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 900; font-size: 0.8rem;">
+                            {{ current_user.name[0].upper() }}
                         </div>
                     </div>
                 {% else %}
-                    <div style="display:flex;align-items:center;gap:0.6rem;">
-                        <i class="fas fa-phone" style="color:var(--primary-light);"></i>
-                        <div>
-                            <div style="color:rgba(255,255,255,0.5);font-size:0.72rem;">Support Line</div>
-                            <div style="color:white;font-weight:700;font-size:0.8rem; line-height: 1.4;">(+268) 3 502 9861<br>(+268) 7 693 6935</div>
-                        </div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem; color: rgba(255,255,255,0.7); font-size: 0.75rem;">
+                        <i class="fas fa-phone-alt" style="color: var(--primary-light);"></i>
+                        <span style="font-weight: 600;">(+268) 7 693 6935</span>
                     </div>
                 {% endif %}
             </div>
@@ -109,36 +76,35 @@
     <div id="sidebar-overlay" onclick="closeSidebar()" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:999; backdrop-filter:blur(2px);"></div>
 
     <main class="main-content animate-up">
-        <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
-            <div style="display:flex; align-items:center; gap:1rem;">
-                <!-- Hamburger for Mobile -->
-                <button id="hamburger" onclick="toggleSidebar()" style="display:none; background:white; border:1px solid var(--border); border-radius:10px; width:42px; height:42px; align-items:center; justify-content:center; cursor:pointer; box-shadow:var(--shadow-sm); flex-shrink:0;">
-                    <i class="fas fa-bars" style="color:var(--primary); font-size:1.1rem;"></i>
-                </button>
-                <div>
-                    <h1 style="font-size: 1.75rem; margin-bottom: 0.25rem;">{% block header %}{% endblock %}</h1>
-                    <p style="font-size: 0.85rem; font-weight: 500; color:var(--text-muted);">Digital Infrastructure Management System</p>
-                </div>
+        <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.5rem; flex-wrap: wrap; gap: 1.5rem; background: white; padding: 1.5rem 2rem; border-radius: 20px; border: 1px solid var(--border); box-shadow: var(--shadow-sm);">
+            <div>
+                <h1 style="font-size: 1.5rem; margin-bottom: 0.25rem;">{% block header %}{% endblock %}</h1>
+                <p style="font-size: 0.8rem; font-weight: 500; color:var(--text-muted);">Smart Infrastructure Management</p>
             </div>
             
-            {% if current_user.is_authenticated %}
-            <div id="notif-wrapper" style="position: relative;">
-                <div id="notif-trigger" class="glass-card" style="cursor: pointer; position: relative; padding: 0.75rem; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
-                    <i class="fas fa-bell" style="font-size: 1.25rem; color: var(--primary);"></i>
-                    <span id="notif-badge" style="display:none; position:absolute; top: -5px; right: -5px; min-width: 20px; height: 20px; background: var(--danger); color: white; border-radius: 50%; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; font-weight: 800; border: 2px solid white; box-shadow: var(--shadow-sm);">0</span>
+            <div style="display: flex; align-items: center; gap: 1.5rem; padding-right: 200px;">
+                {% if current_user.is_authenticated %}
+                <div id="notif-wrapper" style="position: relative;">
+                    <div id="notif-trigger" style="cursor: pointer; width: 44px; height: 44px; background: #f8fafc; border: 1px solid var(--border); border-radius: 12px; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">
+                        <i class="fas fa-bell" style="font-size: 1.1rem; color: var(--primary);"></i>
+                        <span id="notif-badge" style="display:none; position:absolute; top: -5px; right: -5px; min-width: 18px; height: 18px; background: var(--danger); color: white; border-radius: 50%; font-size: 0.65rem; display: flex; align-items: center; justify-content: center; font-weight: 800; border: 2px solid white;">0</span>
+                    </div>
+                    
+                    <div id="notif-dropdown" class="glass-card" style="display:none; position: absolute; top: 130%; right: 0; width: 320px; z-index: 1000; overflow: hidden; padding: 0; border: 1px solid var(--border); box-shadow: var(--shadow-lg);">
+                        <div style="padding: 1rem 1.25rem; border-bottom: 1px solid var(--border); background: #f8fafc; display: flex; justify-content: space-between; align-items: center;">
+                            <h4 style="margin: 0; font-size: 0.9rem;">Notifications</h4>
+                            <button onclick="clearNotifications()" style="background: none; border: none; color: var(--primary); font-size: 0.75rem; cursor: pointer; font-weight: 700;">Clear all</button>
+                        </div>
+                        <div id="notif-list" style="max-height: 350px; overflow-y: auto;"></div>
+                    </div>
                 </div>
+                {% endif %}
                 
-                <div id="notif-dropdown" class="glass-card" style="display:none; position: absolute; top: 120%; right: 0; width: 350px; z-index: 1000; overflow: hidden; padding: 0; border: 1px solid var(--border);">
-                    <div style="padding: 1.25rem; border-bottom: 1px solid var(--border); background: rgba(248, 250, 252, 0.8); display: flex; justify-content: space-between; align-items: center;">
-                        <h4 style="margin: 0; font-size: 1rem; color: var(--text-main);">Notifications</h4>
-                        <button onclick="clearNotifications()" style="background: none; border: none; color: var(--primary); font-size: 0.8rem; cursor: pointer; font-weight: 700;">Mark all read</button>
-                    </div>
-                    <div id="notif-list" style="max-height: 400px; overflow-y: auto;">
-                        <!-- Notifs injected here -->
-                    </div>
+                <div style="display: flex; align-items: center; gap: 0.5rem; color: var(--text-muted); font-size: 0.75rem; font-weight: 600;" class="header-right-meta">
+                    <i class="far fa-calendar-alt"></i>
+                    <span id="current-date">{{ now.strftime('%d %b %Y') if now else '' }}</span>
                 </div>
             </div>
-            {% endif %}
         </header>
         
         {% with messages = get_flashed_messages() %}

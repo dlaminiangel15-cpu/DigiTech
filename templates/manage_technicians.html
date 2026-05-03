@@ -16,6 +16,7 @@
                 <tr>
                     <th>Staff Member</th>
                     <th>Contact & Type</th>
+                    <th>Digital ID</th>
                     <th>Status</th>
                     <th>Action</th>
                 </tr>
@@ -43,6 +44,13 @@
                             <div style="font-size: 0.75rem; color: var(--text-muted);"><i class="fas fa-mobile-alt"></i> MoMo: {{ tech.momo_number or '-' }}</div>
                             <div style="font-size: 0.75rem; color: var(--text-muted);"><i class="fas fa-university"></i> {{ tech.bank_name or 'No Bank' }} ({{ tech.account_number or '-' }})</div>
                         </div>
+                    </td>
+                    <td>
+                        {% if tech.momo_number %}
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=MOMO-{{ tech.momo_number }}" alt="MOMO QR" style="border-radius: 8px; border: 1px solid var(--border); padding: 2px;">
+                        {% else %}
+                            <div style="font-size: 0.7rem; color: var(--text-muted);">No MoMo Data</div>
+                        {% endif %}
                     </td>
                     <td>
                         {% if tech.is_active %}

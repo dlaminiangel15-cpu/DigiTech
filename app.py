@@ -291,6 +291,12 @@ def payroll():
     technicians = User.query.filter_by(role='engineer').all()
     records = Payroll.query.order_by(Payroll.payment_date.desc()).all()
     return render_template('payroll.html', technicians=technicians, records=records)
+    
+@app.route('/admin/system-qr')
+@login_required
+@role_required('admin')
+def system_qr():
+    return render_template('system_qr.html')
 
 @app.route('/api/location/update', methods=['POST'])
 @login_required

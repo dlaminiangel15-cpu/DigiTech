@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}System Access QR{% endblock %}
+{% block header %}Digital Gateway{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: center; align-items: center; min-height: 70vh;">
+    <div class="card animate-up" style="max-width: 500px; width: 100%; padding: 4rem; text-align: center; background: white; border-radius: 40px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);">
+        <div style="margin-bottom: 2.5rem;">
+            <div style="width: 80px; height: 80px; background: var(--primary); border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; color: white; font-size: 2rem;">
+                <i class="fas fa-network-wired"></i>
+            </div>
+            <h2 style="font-size: 2rem; color: var(--text-main); font-weight: 900; margin-bottom: 0.5rem;">Digital Access</h2>
+            <p style="color: var(--text-muted); font-weight: 600;">Scan to access the management portal</p>
+        </div>
+
+        <div style="background: #f8fafc; padding: 2rem; border-radius: 30px; border: 2px dashed var(--border); position: relative; margin-bottom: 2.5rem;">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=https://digitech-s4gw.onrender.com/" 
+                 alt="System QR" 
+                 style="width: 100%; max-width: 250px; display: block; margin: 0 auto; border-radius: 15px;">
+            
+            <div style="position: absolute; top: -10px; right: -10px; background: var(--primary); color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; box-shadow: var(--shadow-md);">
+                <i class="fas fa-check"></i>
+            </div>
+        </div>
+
+        <div style="display: grid; gap: 1rem;">
+            <button onclick="window.print()" class="btn btn-primary" style="padding: 1.25rem;">
+                <i class="fas fa-print"></i> Print QR Poster
+            </button>
+            <a href="https://api.qrserver.com/v1/create-qr-code/?size=1000x1000&data=https://digitech-s4gw.onrender.com/" 
+               target="_blank" 
+               class="btn btn-outline" style="padding: 1.25rem; text-decoration: none;">
+                <i class="fas fa-download"></i> High-Res Download
+            </a>
+        </div>
+
+        <p style="margin-top: 2rem; font-size: 0.85rem; color: var(--text-muted); font-weight: 500;">
+            Gateway: <span style="color: var(--primary); font-family: monospace;">digitech-s4gw.onrender.com</span>
+        </p>
+    </div>
+</div>
+
+<style>
+    @media print {
+        .sidebar, .top-header, .btn, p { display: none !important; }
+        body { background: white !important; margin: 0; padding: 0; }
+        .card { box-shadow: none !important; border: none !important; width: 100% !important; max-width: none !important; padding: 2cm !important; }
+        .card h2, .card p:first-of-type { display: block !important; }
+        img { width: 15cm !important; max-width: none !important; }
+    }
+</style>
+{% endblock %}
