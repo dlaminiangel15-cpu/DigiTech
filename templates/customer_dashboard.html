@@ -15,50 +15,52 @@
     
     .service-card {
         background: white;
-        padding: 2.5rem;
+        padding: 0;
         border-radius: 24px;
         box-shadow: var(--shadow-sm);
         transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
         cursor: pointer;
         text-decoration: none;
-        display: block;
+        display: flex;
+        flex-direction: column;
         border: 1px solid var(--border);
         position: relative;
         overflow: hidden;
         transform-style: preserve-3d;
+        height: 100%;
+    }
+    
+    .service-card-img {
+        width: 100%;
+        height: 160px;
+        background-size: cover;
+        background-position: center;
+        transition: transform 0.6s ease;
+    }
+
+    .service-card-body {
+        padding: 2rem;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
     }
     
     .service-card:hover {
-        transform: translateY(-15px) rotateX(5deg) rotateY(5deg);
+        transform: translateY(-15px) rotateX(2deg) rotateY(2deg);
         box-shadow: 0 30px 60px -15px rgba(15, 23, 42, 0.2);
         border-color: var(--primary);
     }
+
+    .service-card:hover .service-card-img {
+        transform: scale(1.1);
+    }
     
     .service-card i {
-        font-size: 2.5rem;
+        font-size: 1.5rem;
         color: var(--primary);
-        margin-bottom: 1.5rem;
-        display: block;
+        margin-bottom: 0.5rem;
         transition: transform 0.5s ease;
-    }
-    
-    .service-card:hover i {
-        transform: translateZ(50px);
-        color: var(--secondary);
-    }
-    
-    .service-card h4 {
-        font-size: 1.25rem;
-        margin-bottom: 0.75rem;
-        color: var(--text-main);
-        font-weight: 800;
-    }
-    
-    .service-card p {
-        font-size: 0.9rem;
-        color: var(--text-muted);
-        line-height: 1.6;
-        margin: 0;
     }
     
     .floating-3d {
@@ -84,87 +86,129 @@
 
     <div class="service-grid">
         <a href="{{ url_for('book_appointment', service='UPS and Solar Power Systems') }}" class="service-card floating-3d hover-bounce" style="animation-delay: 0s;">
-            <i class="fas fa-solar-panel"></i>
-            <h4>Solar & Power Systems</h4>
-            <p>Installation and maintenance of solar arrays and UPS backups.</p>
+            <div class="service-card-img" style="background-image: url('{{ url_for('static', filename='images/solar.png') }}')"></div>
+            <div class="service-card-body">
+                <i class="fas fa-solar-panel"></i>
+                <h4>Solar & Power Systems</h4>
+                <p>Installation and maintenance of solar arrays and UPS backups.</p>
+            </div>
         </a>
         
         <a href="{{ url_for('book_appointment', service='ATM Hardware maintenance') }}" class="service-card floating-3d hover-bounce" style="animation-delay: 0.1s;">
-            <i class="fas fa-money-bill-wave"></i>
-            <h4>ATM Maintenance</h4>
-            <p>Professional hardware support for automated teller machines.</p>
+            <div class="service-card-img" style="background-image: url('{{ url_for('static', filename='images/atm.png') }}')"></div>
+            <div class="service-card-body">
+                <i class="fas fa-money-bill-wave"></i>
+                <h4>ATM Maintenance</h4>
+                <p>Professional hardware support for automated teller machines.</p>
+            </div>
         </a>
 
         <a href="{{ url_for('book_appointment', service='Cash deposit Machines Maintenance') }}" class="service-card floating-3d hover-bounce" style="animation-delay: 0.2s;">
-            <i class="fas fa-cash-register"></i>
-            <h4>Cash Deposit Systems</h4>
-            <p>Maintenance for high-volume cash deposit and recycling nodes.</p>
+            <div class="service-card-img" style="background-image: url('{{ url_for('static', filename='images/atm.png') }}')"></div>
+            <div class="service-card-body">
+                <i class="fas fa-cash-register"></i>
+                <h4>Cash Deposit Systems</h4>
+                <p>Maintenance for high-volume cash deposit and recycling nodes.</p>
+            </div>
         </a>
         
         <a href="{{ url_for('book_appointment', service='CCTV installation') }}" class="service-card floating-3d hover-bounce" style="animation-delay: 0.3s;">
-            <i class="fas fa-video"></i>
-            <h4>CCTV & Surveillance</h4>
-            <p>Advanced security integration and live monitoring deployments.</p>
+            <div class="service-card-img" style="background-image: url('{{ url_for('static', filename='images/security.png') }}')"></div>
+            <div class="service-card-body">
+                <i class="fas fa-video"></i>
+                <h4>CCTV & Surveillance</h4>
+                <p>Advanced security integration and live monitoring deployments.</p>
+            </div>
         </a>
 
         <a href="{{ url_for('book_appointment', service='Access control system') }}" class="service-card floating-3d hover-bounce" style="animation-delay: 0.4s;">
-            <i class="fas fa-id-card-alt"></i>
-            <h4>Access Control</h4>
-            <p>Biometric and card-based secure entry systems for corporate sites.</p>
+            <div class="service-card-img" style="background-image: url('{{ url_for('static', filename='images/security.png') }}')"></div>
+            <div class="service-card-body">
+                <i class="fas fa-id-card-alt"></i>
+                <h4>Access Control</h4>
+                <p>Biometric and card-based secure entry systems for corporate sites.</p>
+            </div>
         </a>
         
         <a href="{{ url_for('book_appointment', service='Network installation and support') }}" class="service-card floating-3d hover-bounce" style="animation-delay: 0.5s;">
-            <i class="fas fa-network-wired"></i>
-            <h4>Network Infrastructure</h4>
-            <p>Enterprise networking, structured cabling, and support.</p>
+            <div class="service-card-img" style="background-image: url('{{ url_for('static', filename='images/it.png') }}')"></div>
+            <div class="service-card-body">
+                <i class="fas fa-network-wired"></i>
+                <h4>Network Infrastructure</h4>
+                <p>Enterprise networking, structured cabling, and support.</p>
+            </div>
         </a>
         
         <a href="{{ url_for('book_appointment', service='Desktop support/ Work station') }}" class="service-card floating-3d hover-bounce" style="animation-delay: 0.6s;">
-            <i class="fas fa-laptop-code"></i>
-            <h4>Workstation Support</h4>
-            <p>Professional desktop support and specialized hardware config.</p>
+            <div class="service-card-img" style="background-image: url('{{ url_for('static', filename='images/it.png') }}')"></div>
+            <div class="service-card-body">
+                <i class="fas fa-laptop-code"></i>
+                <h4>Workstation Support</h4>
+                <p>Professional desktop support and specialized hardware config.</p>
+            </div>
         </a>
 
         <a href="{{ url_for('book_appointment', service='Computers and Printers consumables') }}" class="service-card floating-3d hover-bounce" style="animation-delay: 0.7s;">
-            <i class="fas fa-print"></i>
-            <h4>Consumables & Parts</h4>
-            <p>High-quality parts and consumables for enterprise IT systems.</p>
+            <div class="service-card-img" style="background-image: url('{{ url_for('static', filename='images/it.png') }}')"></div>
+            <div class="service-card-body">
+                <i class="fas fa-print"></i>
+                <h4>Consumables & Parts</h4>
+                <p>High-quality parts and consumables for enterprise IT systems.</p>
+            </div>
         </a>
 
         <a href="{{ url_for('book_appointment', service='Hardware and software maintenance') }}" class="service-card floating-3d hover-bounce" style="animation-delay: 0.8s;">
-            <i class="fas fa-tools"></i>
-            <h4>HW/SW Maintenance</h4>
-            <p>Comprehensive lifecycle management for all infrastructure assets.</p>
+            <div class="service-card-img" style="background-image: url('{{ url_for('static', filename='images/it.png') }}')"></div>
+            <div class="service-card-body">
+                <i class="fas fa-tools"></i>
+                <h4>HW/SW Maintenance</h4>
+                <p>Comprehensive lifecycle management for all infrastructure assets.</p>
+            </div>
         </a>
         
         <a href="{{ url_for('book_appointment', service='Boom gates support and repairs') }}" class="service-card floating-3d hover-bounce" style="animation-delay: 0.9s;">
-            <i class="fas fa-barrier-gate"></i>
-            <h4>Access Automation</h4>
-            <p>Repair and support for boom gates and automated perimeters.</p>
+            <div class="service-card-img" style="background-image: url('{{ url_for('static', filename='images/security.png') }}')"></div>
+            <div class="service-card-body">
+                <i class="fas fa-barrier-gate"></i>
+                <h4>Access Automation</h4>
+                <p>Repair and support for boom gates and automated perimeters.</p>
+            </div>
         </a>
 
         <a href="{{ url_for('book_appointment', service='Weather station calibration') }}" class="service-card floating-3d hover-bounce" style="animation-delay: 1.0s;">
-            <i class="fas fa-cloud-sun"></i>
-            <h4>Weather Stations</h4>
-            <p>Specialized calibration and maintenance for meteorological nodes.</p>
+            <div class="service-card-img" style="background-image: url('{{ url_for('static', filename='images/solar.png') }}')"></div>
+            <div class="service-card-body">
+                <i class="fas fa-cloud-sun"></i>
+                <h4>Weather Stations</h4>
+                <p>Specialized calibration and maintenance for meteorological nodes.</p>
+            </div>
         </a>
 
         <a href="{{ url_for('book_appointment', service='Repair of all kinds of electronics') }}" class="service-card floating-3d hover-bounce" style="animation-delay: 1.1s;">
-            <i class="fas fa-microchip"></i>
-            <h4>Electronics Repair</h4>
-            <p>Expert component-level repair for complex industrial electronics.</p>
+            <div class="service-card-img" style="background-image: url('{{ url_for('static', filename='images/it.png') }}')"></div>
+            <div class="service-card-body">
+                <i class="fas fa-microchip"></i>
+                <h4>Electronics Repair</h4>
+                <p>Expert component-level repair for complex industrial electronics.</p>
+            </div>
         </a>
 
         <a href="{{ url_for('book_appointment', service='Note counter machines Maintenance') }}" class="service-card floating-3d hover-bounce" style="animation-delay: 1.2s;">
-            <i class="fas fa-calculator"></i>
-            <h4>Note Counters</h4>
-            <p>Precision maintenance for currency counting and sorting hardware.</p>
+            <div class="service-card-img" style="background-image: url('{{ url_for('static', filename='images/atm.png') }}')"></div>
+            <div class="service-card-body">
+                <i class="fas fa-calculator"></i>
+                <h4>Note Counters</h4>
+                <p>Precision maintenance for currency counting and sorting hardware.</p>
+            </div>
         </a>
         
         <a href="{{ url_for('book_appointment', service='IT Consultancy') }}" class="service-card floating-3d hover-bounce" style="animation-delay: 1.3s;">
-            <i class="fas fa-handshake"></i>
-            <h4>IT Consultancy</h4>
-            <p>Strategic advisory for digital infrastructure investments.</p>
+            <div class="service-card-img" style="background-image: url('{{ url_for('static', filename='images/it.png') }}')"></div>
+            <div class="service-card-body">
+                <i class="fas fa-handshake"></i>
+                <h4>IT Consultancy</h4>
+                <p>Strategic advisory for digital infrastructure investments.</p>
+            </div>
         </a>
     </div>
 
