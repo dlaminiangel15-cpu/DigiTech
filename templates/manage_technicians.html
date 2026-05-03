@@ -36,8 +36,12 @@
                     </td>
                     <td>
                         <div style="font-weight: 600; font-size: 0.9rem;">{{ tech.phone or 'No phone' }}</div>
-                        <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--primary); font-weight: 700;">
+                        <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--primary); font-weight: 700; margin-bottom: 0.5rem;">
                             {{ tech.employment_type }}
+                        </div>
+                        <div style="padding-top: 0.5rem; border-top: 1px solid #f1f5f9;">
+                            <div style="font-size: 0.75rem; color: var(--text-muted);"><i class="fas fa-mobile-alt"></i> MoMo: {{ tech.momo_number or '-' }}</div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted);"><i class="fas fa-university"></i> {{ tech.bank_name or 'No Bank' }} ({{ tech.account_number or '-' }})</div>
                         </div>
                     </td>
                     <td>

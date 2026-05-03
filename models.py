@@ -15,6 +15,9 @@ class User(UserMixin, db.Model):
     is_active = db.Column(db.Boolean, default=True)
     employment_type = db.Column(db.String(20), default='inhouse') # inhouse, outsourced
     phone = db.Column(db.String(20), nullable=True)
+    momo_number = db.Column(db.String(20), nullable=True)
+    bank_name = db.Column(db.String(100), nullable=True)
+    account_number = db.Column(db.String(50), nullable=True)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -110,7 +113,9 @@ class Payroll(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     amount = db.Column(db.Float, nullable=False)
     payment_date = db.Column(db.DateTime, default=datetime.utcnow)
-    status = db.Column(db.String(20), default='Paid')
+    payment_method = db.Column(db.String(20), default='MoMo') # MoMo, Bank, Cash
+    status = db.Column(db.String(20), default='Pending') # Pending, Success, Failed
+    transaction_id = db.Column(db.String(100), nullable=True)
     notes = db.Column(db.Text, nullable=True)
 
     user = db.relationship('User', backref=db.backref('payroll_records', lazy='dynamic'))

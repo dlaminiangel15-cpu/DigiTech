@@ -5,6 +5,7 @@ from models import db, User, Appointment, Invoice, Completion, Rating, LocationL
 from utils.auth import role_required
 from utils.notifications import notify_engineer_of_assignment, notify_admin_of_booking, send_notification
 from utils.maps import get_google_maps_api_key, ai_triage_suggestion
+from utils.payments import process_payout
 from werkzeug.utils import secure_filename
 from datetime import datetime
 from dotenv import load_dotenv
@@ -206,10 +207,19 @@ def create_engineer():
     employment_type = request.form.get('employment_type', 'inhouse')
     phone = request.form.get('phone')
     
+    momo_number = request.form.get('momo_number')
+    bank_name = request.form.get('bank_name')
+    account_number = request.form.get('account_number')
+    
     if User.query.filter_by(email=email).first():
         flash('Staff email already exists')
     else:
-        new_eng = User(name=name, email=email, role='engineer', employment_type=employment_type, phone=phone)
+        new_eng = User(
+            name=name, email=email, role='engineer', 
+            employment_type=employment_type, phone=phone,
+            momo_number=momo_number, bank_name=bank_name,
+            account_number=account_number
+        )
         new_eng.set_password(password)
         db.session.add(new_eng)
         db.session.commit()
@@ -252,12 +262,30 @@ def payroll():
     if request.method == 'POST':
         user_id = request.form['user_id']
         amount = float(request.form['amount'])
+        method = request.form.get('payment_method', 'MoMo')
         notes = request.form.get('notes')
         
-        record = Payroll(user_id=user_id, amount=amount, notes=notes)
+        user = db.session.get(User, user_id)
+        
+        # Trigger Payout via Utility
+        payout_result = process_payout(user, amount, method)
+        
+        record = Payroll(
+            user_id=user_id, 
+            amount=amount, 
+            payment_method=method,
+            notes=notes,
+            status='Success' if payout_result['success'] else 'Failed',
+            transaction_id=payout_result.get('transaction_id')
+        )
         db.session.add(record)
         db.session.commit()
-        flash('Payroll record added successfully')
+        
+        if payout_result['success']:
+            flash(f'Payout successful: {payout_result["message"]}')
+        else:
+            flash(f'Payout error: {payout_result["message"]}', 'error')
+            
         return redirect(url_for('payroll'))
         
     technicians = User.query.filter_by(role='engineer').all()

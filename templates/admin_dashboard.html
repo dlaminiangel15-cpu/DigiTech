@@ -162,6 +162,21 @@
                     <label>Phone Number</label>
                     <input type="text" name="phone" autocomplete="tel" placeholder="+268 ...">
                 </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem; padding: 1.5rem; background: #f8fafc; border-radius: 12px; border: 1px solid var(--border);">
+                    <div style="grid-column: span 2; font-size: 0.75rem; font-weight: 800; color: var(--primary); text-transform: uppercase; margin-bottom: 0.5rem;">Payout Details</div>
+                    <div class="form-group">
+                        <label>MTN MoMo #</label>
+                        <input type="text" name="momo_number" placeholder="76XXXXXX">
+                    </div>
+                    <div class="form-group">
+                        <label>Bank Name</label>
+                        <input type="text" name="bank_name" placeholder="e.g. Standard Bank">
+                    </div>
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label>Bank Account Number</label>
+                        <input type="text" name="account_number" placeholder="Account digits">
+                    </div>
+                </div>
                 <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
                     <i class="fas fa-user-plus"></i> Create Account
                 </button>
