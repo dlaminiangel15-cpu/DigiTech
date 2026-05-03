@@ -1,7 +1,7 @@
 import os
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
-from models import db, User, Appointment, Invoice, Completion, Rating
+from models import db, User, Appointment, Invoice, Completion, Rating, LocationLog, Payroll
 from utils.auth import role_required
 from utils.notifications import notify_engineer_of_assignment, notify_admin_of_booking, send_notification
 from utils.maps import get_google_maps_api_key, ai_triage_suggestion
@@ -53,26 +53,10 @@ def page_not_found(e):
 def internal_error(e):
     return render_template('500.html'), 500
 
-@app.route('/signup', methods=['GET', 'POST'])
-def signup():
-    if request.method == 'POST':
-        name = request.form['name']
-        email = request.form['email']
-        password = request.form['password']
-        
-        if User.query.filter_by(email=email).first():
-            flash('Email already registered.')
-            return redirect(url_for('signup'))
-            
-        user = User(name=name, email=email, role='customer')
-        user.set_password(password)
-        db.session.add(user)
-        db.session.commit()
-        
-        login_user(user)
-        flash('Account created successfully!')
-        return redirect(url_for('customer_view'))
-    return render_template('signup.html')
+# Signup disabled as per requirements. Admin creates all accounts.
+# @app.route('/signup', methods=['GET', 'POST'])
+# def signup():
+#     ...
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -82,6 +66,9 @@ def login():
         user = User.query.filter_by(email=email).first()
         
         if user and user.check_password(password):
+            if not user.is_active:
+                flash('Account is disabled. Please contact admin.')
+                return redirect(url_for('login'))
             login_user(user)
             if user.role == 'admin':
                 return redirect(url_for('admin_dashboard'))
@@ -216,16 +203,89 @@ def create_engineer():
     name = request.form['name']
     email = request.form['email']
     password = request.form['password']
+    employment_type = request.form.get('employment_type', 'inhouse')
+    phone = request.form.get('phone')
     
     if User.query.filter_by(email=email).first():
         flash('Staff email already exists')
     else:
-        new_eng = User(name=name, email=email, role='engineer')
+        new_eng = User(name=name, email=email, role='engineer', employment_type=employment_type, phone=phone)
         new_eng.set_password(password)
         db.session.add(new_eng)
         db.session.commit()
         flash(f'Engineer account created for {name}')
     return redirect(url_for('admin_dashboard'))
+
+@app.route('/admin/technicians')
+@login_required
+@role_required('admin')
+def manage_technicians():
+    technicians = User.query.filter(User.role != 'admin').all()
+    return render_template('manage_technicians.html', technicians=technicians)
+
+@app.route('/admin/technicians/toggle/<int:id>', methods=['POST'])
+@login_required
+@role_required('admin')
+def toggle_technician_status(id):
+    user = db.session.get(User, id)
+    if user:
+        user.is_active = not user.is_active
+        db.session.commit()
+        flash(f'Status updated for {user.name}')
+    return redirect(url_for('manage_technicians'))
+
+@app.route('/admin/technicians/delete/<int:id>', methods=['POST'])
+@login_required
+@role_required('admin')
+def delete_technician(id):
+    user = db.session.get(User, id)
+    if user:
+        db.session.delete(user)
+        db.session.commit()
+        flash(f'Technician {user.name} removed')
+    return redirect(url_for('manage_technicians'))
+
+@app.route('/admin/payroll', methods=['GET', 'POST'])
+@login_required
+@role_required('admin')
+def payroll():
+    if request.method == 'POST':
+        user_id = request.form['user_id']
+        amount = float(request.form['amount'])
+        notes = request.form.get('notes')
+        
+        record = Payroll(user_id=user_id, amount=amount, notes=notes)
+        db.session.add(record)
+        db.session.commit()
+        flash('Payroll record added successfully')
+        return redirect(url_for('payroll'))
+        
+    technicians = User.query.filter_by(role='engineer').all()
+    records = Payroll.query.order_by(Payroll.payment_date.desc()).all()
+    return render_template('payroll.html', technicians=technicians, records=records)
+
+@app.route('/api/location/update', methods=['POST'])
+@login_required
+def update_location():
+    data = request.json
+    lat = data.get('lat')
+    lng = data.get('lng')
+    apt_id = data.get('appointment_id')
+    
+    if lat and lng:
+        log = LocationLog(user_id=current_user.id, appointment_id=apt_id, lat=lat, lng=lng)
+        db.session.add(log)
+        db.session.commit()
+        return {'status': 'success'}
+    return {'status': 'error', 'message': 'Missing data'}, 400
+
+@app.route('/admin/journey/<int:apt_id>')
+@login_required
+@role_required('admin')
+def view_journey(apt_id):
+    apt = db.session.get(Appointment, apt_id)
+    logs = LocationLog.query.filter_by(appointment_id=apt_id).order_by(LocationLog.timestamp.asc()).all()
+    return render_template('journey_map.html', appointment=apt, logs=logs)
 
 @app.route('/admin/assign/<int:id>', methods=['POST'])
 @login_required

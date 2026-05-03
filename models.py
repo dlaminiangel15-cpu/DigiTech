@@ -12,6 +12,9 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(100), unique=True, nullable=False)
     password_hash = db.Column(db.String(200), nullable=False)
     role = db.Column(db.String(20), nullable=False, default='customer') # admin, engineer, customer
+    is_active = db.Column(db.Boolean, default=True)
+    employment_type = db.Column(db.String(20), default='inhouse') # inhouse, outsourced
+    phone = db.Column(db.String(20), nullable=True)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -88,3 +91,26 @@ class Notification(db.Model):
     role_target = db.Column(db.String(20), nullable=True) # Target specific role (admin/engineer)
 
     user = db.relationship('User', backref=db.backref('notifications', lazy='dynamic'))
+
+class LocationLog(db.Model):
+    __tablename__ = 'location_logs'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    appointment_id = db.Column(db.Integer, db.ForeignKey('appointments.id'), nullable=True)
+    lat = db.Column(db.Float, nullable=False)
+    lng = db.Column(db.Float, nullable=False)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+    user = db.relationship('User', backref=db.backref('location_logs', lazy='dynamic'))
+    appointment = db.relationship('Appointment', backref=db.backref('location_logs', lazy='dynamic'))
+
+class Payroll(db.Model):
+    __tablename__ = 'payroll'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    amount = db.Column(db.Float, nullable=False)
+    payment_date = db.Column(db.DateTime, default=datetime.utcnow)
+    status = db.Column(db.String(20), default='Paid')
+    notes = db.Column(db.Text, nullable=True)
+
+    user = db.relationship('User', backref=db.backref('payroll_records', lazy='dynamic'))

@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}Journey Map{% endblock %}
+{% block header %}Technician Journey Tracking{% endblock %}
+
+{% block content %}
+<div class="card animate-up" style="padding: 2.5rem; margin-bottom: 2rem;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem;">
+        <div>
+            <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem;">
+                <i class="fas fa-route" style="color: var(--primary); margin-right: 0.75rem;"></i> 
+                Work Order #SR-{{ "%05d" | format(appointment.id) }}
+            </h3>
+            <p style="color: var(--text-muted); font-weight: 500;">
+                Technician: <strong>{{ appointment.engineer.name }}</strong> | 
+                Client: <strong>{{ appointment.guest_name or 'Guest' }}</strong>
+            </p>
+        </div>
+        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline">
+            <i class="fas fa-arrow-left"></i> Back to Dispatcher
+        </a>
+    </div>
+
+    {% if logs %}
+        <div id="journey-map" style="height: 600px; width: 100%; border-radius: 20px; border: 1px solid var(--border); box-shadow: var(--shadow-sm);"></div>
+        
+        <div style="margin-top: 2rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
+            <div class="glass-card" style="padding: 1.5rem; text-align: center;">
+                <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 800; text-transform: uppercase;">Points Recorded</div>
+                <div style="font-size: 1.5rem; font-weight: 900; color: var(--primary);">{{ logs|length }}</div>
+            </div>
+            <div class="glass-card" style="padding: 1.5rem; text-align: center;">
+                <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 800; text-transform: uppercase;">Start Time</div>
+                <div style="font-size: 1rem; font-weight: 700;">{{ logs[0].timestamp.strftime('%H:%M:%S') }}</div>
+            </div>
+            <div class="glass-card" style="padding: 1.5rem; text-align: center;">
+                <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 800; text-transform: uppercase;">Last Update</div>
+                <div style="font-size: 1rem; font-weight: 700;">{{ logs[-1].timestamp.strftime('%H:%M:%S') }}</div>
+            </div>
+        </div>
+    {% else %}
+        <div style="text-align: center; padding: 10rem 2rem; background: #f8fafc; border-radius: 20px; border: 2px dashed var(--border);">
+            <i class="fas fa-map-marked-alt" style="font-size: 4rem; color: var(--text-muted); opacity: 0.3; margin-bottom: 2rem; display: block;"></i>
+            <h4 style="font-size: 1.25rem; color: var(--text-main);">No Journey Data Available</h4>
+            <p style="color: var(--text-muted);">The technician has not recorded any GPS coordinates for this job yet.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+{% endblock %}
+
+{% block scripts %}
+{% if logs %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const pathData = [
+            {% for log in logs %}
+                [{{ log.lat }}, {{ log.lng }}],
+            {% endfor %}
+        ];
+
+        const map = L.map('journey-map').setView(pathData[0], 15);
+        
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Draw Polyline
+        const polyline = L.polyline(pathData, {
+            color: '#2563eb',
+            weight: 5,
+            opacity: 0.7,
+            smoothFactor: 1
+        }).addTo(map);
+
+        // Add Markers for Start and End
+        L.marker(pathData[0], {title: "Start"}).addTo(map).bindPopup("Journey Started");
+        L.marker(pathData[pathData.length - 1], {title: "End"}).addTo(map).bindPopup("Last Known Location");
+
+        // Fit map to polyline
+        map.fitBounds(polyline.getBounds(), {padding: [50, 50]});
+    });
+</script>
+{% endif %}
+{% endblock %}

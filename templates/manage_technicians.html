@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Staff{% endblock %}
+{% block header %}Staff Management{% endblock %}
+
+{% block content %}
+<div class="card animate-up" style="padding: 2.5rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.5rem;">
+        <h3 style="font-size: 1.5rem;"><i class="fas fa-users-cog" style="color: var(--primary); margin-right: 0.75rem;"></i> Active Personnel</h3>
+        <span class="badge badge-assigned">{{ technicians|length }} Total Registered</span>
+    </div>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Staff Member</th>
+                    <th>Contact & Type</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for tech in technicians %}
+                <tr class="animate-up" style="animation-delay: {{ loop.index * 0.05 }}s;">
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            <div style="width: 40px; height: 40px; background: var(--primary-light); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 800;">
+                                {{ tech.name[0].upper() }}
+                            </div>
+                            <div>
+                                <div style="font-weight: 800; color: var(--text-main);">{{ tech.name }}</div>
+                                <div style="font-size: 0.85rem; color: var(--text-muted);">{{ tech.email }}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div style="font-weight: 600; font-size: 0.9rem;">{{ tech.phone or 'No phone' }}</div>
+                        <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--primary); font-weight: 700;">
+                            {{ tech.employment_type }}
+                        </div>
+                    </td>
+                    <td>
+                        {% if tech.is_active %}
+                            <span class="badge badge-completed">Active</span>
+                        {% else %}
+                            <span class="badge" style="background: #fee2e2; color: #ef4444; border: 1px solid #fecaca;">Deactivated</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <form action="{{ url_for('toggle_technician_status', id=tech.id) }}" method="POST">
+                                <button type="submit" class="btn {{ 'btn-outline' if tech.is_active else 'btn-primary' }}" style="padding: 0.5rem 1rem; font-size: 0.8rem;">
+                                    {{ 'Deactivate' if tech.is_active else 'Activate' }}
+                                </button>
+                            </form>
+                            <form action="{{ url_for('delete_technician', id=tech.id) }}" method="POST" onsubmit="return confirm('Are you sure you want to remove this staff member? This cannot be undone.');">
+                                <button type="submit" class="btn" style="padding: 0.5rem 1rem; font-size: 0.8rem; background: #fee2e2; color: #ef4444; border: 1px solid #fecaca;">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -206,6 +206,44 @@
     }
     
     function closeModal() { document.getElementById('mapModal').style.display = 'none'; }
+
+    // --- GPS JOURNEY TRACKING ---
+    const activeJobId = {% set active_job = jobs|selectattr('status', 'equalto', 'In Progress')|first %}{{ active_job.id if active_job else 'null' }};
+    
+    if (activeJobId && navigator.geolocation) {
+        console.log("GPS Journey Tracking Active for Job #" + activeJobId);
+        
+        async function reportLocation() {
+            navigator.geolocation.getCurrentPosition(async (position) => {
+                const { latitude, longitude } = position.coords;
+                console.log(`Reporting location: ${latitude}, ${longitude}`);
+                
+                try {
+                    await fetch('/api/location/update', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            lat: latitude,
+                            lng: longitude,
+                            appointment_id: activeJobId
+                        })
+                    });
+                } catch (e) {
+                    console.error("Failed to report location", e);
+                }
+            }, (err) => {
+                console.warn("Geolocation error:", err.message);
+            }, {
+                enableHighAccuracy: true,
+                timeout: 5000,
+                maximumAge: 0
+            });
+        }
+
+        // Report immediately and then every 60 seconds
+        reportLocation();
+        setInterval(reportLocation, 60000);
+    }
 </script>
 {% endblock %}
 {% endblock %}
