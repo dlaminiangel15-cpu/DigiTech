@@ -19,7 +19,10 @@
 <body>
     <nav class="top-nav">
         <div class="nav-left">
-            <a href="/" class="logo">W</a>
+            <a href="/" class="logo">
+                <div class="logo-icon">DI</div>
+                <span class="logo-text-brand">Digital Infrastructures</span>
+            </a>
         </div>
 
         <div class="nav-center">
@@ -69,18 +72,21 @@
     <div id="sidebar-overlay" onclick="closeSidebar()" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:999; backdrop-filter:blur(2px);"></div>
 
     <main class="main-content animate-up">
-        <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.5rem; flex-wrap: wrap; gap: 1.5rem; background: white; padding: 1.5rem 2rem; border-radius: 20px; border: 1px solid var(--border); box-shadow: var(--shadow-sm);">
+        <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3rem; flex-wrap: wrap; gap: 1.5rem; background: white; padding: 2rem 2.5rem; border-radius: 24px; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 10px 25px rgba(0,0,0,0.02);">
             <div>
-                <h1 style="font-size: 1.5rem; margin-bottom: 0.25rem;">{% block header %}{% endblock %}</h1>
-                <p style="font-size: 0.8rem; font-weight: 500; color:var(--text-muted);">Smart Infrastructure Management</p>
+                <h1 style="font-size: 1.75rem; margin-bottom: 0.4rem; color: var(--text-main); font-weight: 900;">{% block header %}{% endblock %}</h1>
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <div style="width: 20px; height: 3px; background: var(--accent); border-radius: 10px;"></div>
+                    <p style="font-size: 0.85rem; font-weight: 600; color:var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">Digital Solution Portal</p>
+                </div>
             </div>
             
-            <div style="display: flex; align-items: center; gap: 1.5rem; padding-right: 200px;">
+            <div style="display: flex; align-items: center; gap: 2rem;">
                 {% if current_user.is_authenticated %}
                 <div id="notif-wrapper" style="position: relative;">
-                    <div id="notif-trigger" style="cursor: pointer; width: 44px; height: 44px; background: #f8fafc; border: 1px solid var(--border); border-radius: 12px; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">
-                        <i class="fas fa-bell" style="font-size: 1.1rem; color: var(--primary);"></i>
-                        <span id="notif-badge" style="display:none; position:absolute; top: -5px; right: -5px; min-width: 18px; height: 18px; background: var(--danger); color: white; border-radius: 50%; font-size: 0.65rem; display: flex; align-items: center; justify-content: center; font-weight: 800; border: 2px solid white;">0</span>
+                    <div id="notif-trigger" style="cursor: pointer; width: 48px; height: 48px; background: #f8fafc; border: 1px solid var(--border); border-radius: 14px; display: flex; align-items: center; justify-content: center; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);">
+                        <i class="fas fa-bell" style="font-size: 1.2rem; color: var(--primary);"></i>
+                        <span id="notif-badge" style="display:none; position:absolute; top: -5px; right: -5px; min-width: 20px; height: 20px; background: var(--danger); color: white; border-radius: 50%; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; font-weight: 800; border: 2px solid white;">0</span>
                     </div>
                     
                     <div id="notif-dropdown" class="glass-card" style="display:none; position: absolute; top: 130%; right: 0; width: 320px; z-index: 1000; overflow: hidden; padding: 0; border: 1px solid var(--border); box-shadow: var(--shadow-lg);">
@@ -93,8 +99,8 @@
                 </div>
                 {% endif %}
                 
-                <div style="display: flex; align-items: center; gap: 0.5rem; color: var(--text-muted); font-size: 0.75rem; font-weight: 600;" class="header-right-meta">
-                    <i class="far fa-calendar-alt"></i>
+                <div style="display: flex; align-items: center; gap: 0.6rem; background: #f8fafc; padding: 0.6rem 1.25rem; border-radius: 100px; border: 1px solid var(--border); color: var(--text-muted); font-size: 0.8rem; font-weight: 700;">
+                    <i class="far fa-calendar-alt" style="color: var(--primary);"></i>
                     <span id="current-date">{{ now.strftime('%d %b %Y') if now else '' }}</span>
                 </div>
             </div>
@@ -115,39 +121,45 @@
             {% block content %}{% endblock %}
         </div>
 
-        <footer style="margin-top: 8rem; padding-top: 4rem; border-top: 1px solid var(--border); padding-bottom: 3rem;">
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 4rem;">
+        <footer style="margin-top: 10rem; padding: 6rem 4rem 4rem; background: var(--nav-bg); color: white; border-radius: 40px 40px 0 0;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 4rem; max-width: 1400px; margin: 0 auto;">
                 <div class="animate-up" style="animation-delay: 0.1s;">
-                    <div style="font-weight: 900; color: var(--primary); font-size: 1rem; margin-bottom: 1.5rem; letter-spacing: -0.02em;">DIGITAL INFRASTRUCTURES</div>
-                    <p style="font-size: 0.85rem; line-height: 1.7; color: var(--text-muted);">
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 2rem;">
+                        <div class="logo-icon" style="width: 36px; height: 36px; font-size: 1.2rem;">DI</div>
+                        <span style="font-weight: 900; color: white; font-size: 1.1rem; letter-spacing: -0.02em; text-transform: uppercase;">Digital Infrastructures</span>
+                    </div>
+                    <p style="font-size: 0.9rem; line-height: 1.8; color: rgba(255,255,255,0.6); font-weight: 500;">
                         Leading provider of tech infrastructure, hardware maintenance, and specialized systems across Eswatini. High standards, unique solutions.
                     </p>
                 </div>
                 <div class="animate-up" style="animation-delay: 0.2s;">
-                    <h5 style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 1.5rem; color: var(--text-main); font-weight: 800;">Headquarters</h5>
-                    <p style="font-size: 0.85rem; line-height: 1.6; color: var(--text-muted);">
-                        <i class="fas fa-map-marker-alt" style="color: var(--primary); margin-right: 0.75rem;"></i>
+                    <h5 style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 2rem; color: var(--accent); font-weight: 800;">Headquarters</h5>
+                    <p style="font-size: 0.9rem; line-height: 1.8; color: rgba(255,255,255,0.7); font-weight: 500;">
+                        <i class="fas fa-map-marker-alt" style="color: var(--accent); margin-right: 0.75rem;"></i>
                         Bosco Skill Centre, Plot No. 7 Of Farm 280,<br>
                         Southern Distributor Road, Manzini Industrial Site,<br>
                         Manzini District, Eswatini
                     </p>
                 </div>
                 <div class="animate-up" style="animation-delay: 0.3s;">
-                    <p style="font-size: 0.85rem; margin-bottom: 0.75rem; color: var(--text-muted); font-weight: 500;">
-                        <i class="fas fa-phone" style="color: var(--primary); margin-right: 0.75rem;"></i>
-                        (+268) 3 502 9861 / 7 693 6935
-                    </p>
-                    <p style="font-size: 0.85rem; margin-bottom: 0.75rem; color: var(--text-muted); font-weight: 500;">
-                        <i class="fas fa-envelope-open-text" style="color: var(--primary); margin-right: 0.75rem;"></i>
-                        accounts@digitalinfrastructure.co.za
-                    </p>
-                    <p style="font-size: 0.85rem; color: var(--text-muted); font-weight: 500;">
-                        <i class="fas fa-mailbox" style="color: var(--primary); margin-right: 0.75rem;"></i>
-                        PO Box 5513, Manzini
-                    </p>
+                    <h5 style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 2rem; color: var(--accent); font-weight: 800;">Connect</h5>
+                    <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+                        <p style="font-size: 0.9rem; color: rgba(255,255,255,0.7); font-weight: 500; margin: 0;">
+                            <i class="fas fa-phone" style="color: var(--accent); margin-right: 0.75rem;"></i>
+                            (+268) 3 502 9861 / 7 693 6935
+                        </p>
+                        <p style="font-size: 0.9rem; color: rgba(255,255,255,0.7); font-weight: 500; margin: 0;">
+                            <i class="fas fa-envelope-open-text" style="color: var(--accent); margin-right: 0.75rem;"></i>
+                            accounts@digitalinfrastructure.co.za
+                        </p>
+                        <p style="font-size: 0.9rem; color: rgba(255,255,255,0.7); font-weight: 500; margin: 0;">
+                            <i class="fas fa-mailbox" style="color: var(--accent); margin-right: 0.75rem;"></i>
+                            PO Box 5513, Manzini
+                        </p>
+                    </div>
                 </div>
             </div>
-            <div style="margin-top: 5rem; text-align: center; font-size: 0.75rem; color: var(--text-muted); font-weight: 600; border-top: 1px solid #f1f5f9; padding-top: 2rem;">
+            <div style="margin-top: 6rem; text-align: center; font-size: 0.8rem; color: rgba(255,255,255,0.4); font-weight: 600; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 3rem; max-width: 1400px; margin-left: auto; margin-right: auto;">
                 &copy; 2026 DIGITAL INFRASTRUCTURES INVESTMENT PTY LTD. Engineered for Excellence.
             </div>
         </footer>

@@ -25,9 +25,10 @@
     --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
     --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
     --shadow-lg: 0 10px 30px rgba(0,0,0,0.1);
-    --shadow-premium: 0 20px 40px rgba(0,0,0,0.3);
-    --glass: blur(16px) saturate(180%);
+    --shadow-premium: 0 20px 40px rgba(0,0,0,0.4);
+    --glass: blur(20px) saturate(180%);
     --accent: #facc15;
+    --nav-bg: rgba(15, 23, 42, 0.92); /* Deep Midnight Blue */
 }
 
 /* ─── Reset ─────────────────────────────────── */
@@ -52,25 +53,25 @@ p { line-height: 1.7; color: var(--text-muted); }
 .top-nav {
     height: auto;
     position: fixed;
-    top: 1.5rem; 
+    top: 1.25rem; 
     left: 1.5rem;
     right: 1.5rem;
     z-index: 1000;
-    background: rgba(10, 10, 10, 0.9);
+    background: var(--nav-bg);
     backdrop-filter: var(--glass);
-    padding: 0.75rem 2rem;
+    padding: 0.8rem 2.5rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border: 1px solid rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.1);
     border-radius: 100px;
     box-shadow: var(--shadow-premium);
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .top-nav:hover {
-    background: rgba(0, 0, 0, 0.95);
-    border-color: rgba(255,255,255,0.15);
+    background: rgba(15, 23, 42, 0.98);
+    border-color: rgba(255,255,255,0.2);
 }
 
 .nav-left, .nav-right {
@@ -91,7 +92,7 @@ p { line-height: 1.7; color: var(--text-muted); }
 
 .main-content {
     margin-left: 0;
-    padding: 2.5rem 4rem 3rem;
+    padding: 7rem 4rem 3rem;
     min-height: 100vh;
 }
 
@@ -100,25 +101,35 @@ p { line-height: 1.7; color: var(--text-muted); }
     text-decoration: none;
     display: flex;
     align-items: center;
-    gap: 0.2rem;
+    gap: 0.4rem;
     font-family: 'Playfair Display', serif;
-    font-size: 1.8rem;
+    font-size: 1.6rem;
     font-weight: 800;
-    color: var(--accent);
+    color: white;
 }
 
-.logo span {
-    color: var(--accent);
-}
-
-.logo::after {
-    content: '';
-    width: 8px;
-    height: 8px;
+.logo-icon {
+    width: 32px;
+    height: 32px;
     background: var(--accent);
-    border-radius: 50%;
-    margin-left: 2px;
-    margin-top: 10px;
+    color: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 900;
+    font-size: 1.1rem;
+    box-shadow: 0 4px 10px rgba(250, 204, 21, 0.3);
+}
+
+.logo-text-brand {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    color: white;
+    text-transform: uppercase;
 }
 
 /* ─── Nav Links ─────────────────────────────── */
@@ -134,12 +145,14 @@ p { line-height: 1.7; color: var(--text-muted); }
 .nav-link {
     display: flex;
     align-items: center;
-    padding: 0.5rem 1rem;
-    color: rgba(255,255,255,0.7);
+    padding: 0.5rem 1.2rem;
+    color: rgba(255,255,255,0.6);
     text-decoration: none;
     transition: all 0.3s ease;
-    font-weight: 500;
-    font-size: 0.9rem;
+    font-weight: 600;
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
     position: relative;
 }
 
@@ -154,13 +167,13 @@ p { line-height: 1.7; color: var(--text-muted); }
 .nav-link.active::after {
     content: '';
     position: absolute;
-    bottom: -4px;
+    bottom: -6px;
     left: 50%;
     transform: translateX(-50%);
-    width: 15px;
+    width: 20px;
     height: 2px;
     background: var(--accent);
-    border-radius: 2px;
+    border-radius: 4px;
 }
 
 .btn-contact {
