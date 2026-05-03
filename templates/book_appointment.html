@@ -5,10 +5,157 @@
 
 {% block head %}
 <style>
+    :root {
+        --step-color: var(--primary);
+        --step-bg: #e2e8f0;
+    }
+
+    /* Progress Tracker */
+    .progress-stepper {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 4rem;
+        position: relative;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .progress-stepper::before {
+        content: '';
+        position: absolute;
+        top: 20px;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: var(--step-bg);
+        z-index: 1;
+    }
+    .progress-bar-fill {
+        position: absolute;
+        top: 20px;
+        left: 0;
+        height: 4px;
+        background: var(--primary);
+        z-index: 2;
+        width: 0%;
+        transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .step-node {
+        width: 44px;
+        height: 44px;
+        background: white;
+        border: 4px solid var(--step-bg);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 3;
+        font-weight: 800;
+        color: var(--text-muted);
+        transition: all 0.4s ease;
+        position: relative;
+    }
+    .step-node.active {
+        border-color: var(--primary);
+        color: var(--primary);
+        transform: scale(1.15);
+        box-shadow: 0 0 0 8px rgba(37, 99, 235, 0.1);
+    }
+    .step-node.completed {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: white;
+    }
+    .step-label {
+        position: absolute;
+        top: 55px;
+        font-size: 0.75rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        white-space: nowrap;
+        color: var(--text-muted);
+    }
+    .step-node.active .step-label { color: var(--primary); }
+
+    /* Service Grid Selection */
+    .service-selection-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-top: 1rem;
+    }
+    .service-card-input {
+        display: none;
+    }
+    .service-card-ui {
+        border: 2px solid var(--border);
+        border-radius: 20px;
+        padding: 0;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        background: white;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        position: relative;
+    }
+    .service-card-image {
+        width: 100%;
+        height: 120px;
+        background-size: cover;
+        background-position: center;
+        transition: transform 0.5s ease;
+    }
+    .service-card-content {
+        padding: 1.25rem 1rem;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        background: white;
+        z-index: 2;
+    }
+    .service-card-ui i {
+        font-size: 1.5rem;
+        color: var(--primary);
+        margin-bottom: 0.25rem;
+    }
+    .service-card-ui span {
+        font-size: 0.85rem;
+        font-weight: 800;
+        color: var(--text-main);
+        line-height: 1.3;
+    }
+    .service-card-input:checked + .service-card-ui {
+        border-color: var(--primary);
+        box-shadow: 0 15px 35px -10px rgba(37, 99, 235, 0.25);
+        transform: translateY(-8px);
+    }
+    .service-card-input:checked + .service-card-ui .service-card-image {
+        transform: scale(1.1);
+    }
+    .service-card-input:checked + .service-card-ui .service-card-content {
+        background: rgba(37, 99, 235, 0.05);
+    }
+
+    /* Form Steps */
+    .form-step {
+        display: none;
+        animation: slideUpFade 0.5s ease-out forwards;
+    }
+    .form-step.active {
+        display: block;
+    }
+
     .upload-area {
         border: 2px dashed var(--border);
-        border-radius: 16px;
-        padding: 2rem;
+        border-radius: 20px;
+        padding: 3rem;
         text-align: center;
         transition: all 0.3s ease;
         cursor: pointer;
@@ -21,139 +168,240 @@
     .upload-preview {
         display: none;
         width: 100%;
-        height: 150px;
-        object-fit: cover;
+        max-height: 250px;
+        object-fit: contain;
         border-radius: 12px;
-        margin-top: 1rem;
+        margin-top: 1.5rem;
+        border: 1px solid var(--border);
+    }
+
+    .form-section-title {
+        font-size: 1.5rem;
+        margin-bottom: 2.5rem;
+        text-align: center;
+        color: var(--text-main);
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="card animate-up" style="padding: 3rem; max-width: 900px; margin: 0 auto; animation-delay: 0.1s;">
-    <div style="margin-bottom: 3.5rem; text-align: center;">
-        <h2 style="font-size: 2rem; color: var(--text-main); margin-bottom: 0.75rem;">Create a New Service Ticket</h2>
-        <p style="color: var(--text-muted); font-size: 1.1rem; max-width: 600px; margin: 0 auto;">Provide your details below and our technical team will get back to you shortly.</p>
+<div class="card animate-up" style="padding: 4rem; max-width: 1000px; margin: 0 auto; border: none; box-shadow: var(--shadow-premium);">
+    
+    <!-- Progress Tracker -->
+    <div class="progress-stepper">
+        <div class="progress-bar-fill" id="progressBar"></div>
+        <div class="step-node active" id="node-1">1 <span class="step-label">Basic Info</span></div>
+        <div class="step-node" id="node-2">2 <span class="step-label">Select Service</span></div>
+        <div class="step-node" id="node-3">3 <span class="step-label">Job Details</span></div>
     </div>
 
-    <form method="POST" enctype="multipart/form-data">
-        <!-- Hidden dummy lat/lng to keep backend happy (optional fields) -->
+    <form id="bookingForm" method="POST" enctype="multipart/form-data">
         <input type="hidden" name="lat" value="0">
         <input type="hidden" name="lng" value="0">
 
-        <!-- Personal Information -->
-        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 2rem;">
-            <div style="width: 40px; height: 40px; background: rgba(37, 99, 235, 0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--primary);">
-                <i class="fas fa-user-shield"></i>
-            </div>
-            <h3 style="font-size: 1.25rem; margin: 0;">Personal Information</h3>
-        </div>
-
-        <div class="form-group">
-            <label>Full Legal Name</label>
-            <div style="position: relative;">
-                <i class="far fa-user" style="position: absolute; left: 1.25rem; top: 1.1rem; color: var(--text-muted);"></i>
-                <input type="text" name="name" placeholder="E.g. Sipho Dlamini" required style="padding-left: 3rem;">
-            </div>
-        </div>
-
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+        <!-- STEP 1: Personal Info -->
+        <div class="form-step active" id="step-1">
+            <h3 class="form-section-title">Tell us who you are</h3>
             <div class="form-group">
-                <label>Email Address</label>
-                <input type="email" name="email" placeholder="sipho@example.sz" required>
+                <label>Full Legal Name</label>
+                <div style="position: relative;">
+                    <i class="far fa-user" style="position: absolute; left: 1.25rem; top: 1.1rem; color: var(--text-muted);"></i>
+                    <input type="text" name="name" id="client_name" placeholder="E.g. Sipho Dlamini" required style="padding-left: 3rem; height: 60px;">
+                </div>
             </div>
-            <div class="form-group">
-                <label>Phone Number</label>
-                <input type="tel" name="phone" placeholder="+268 7600 0000" required>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" name="email" id="client_email" placeholder="sipho@example.sz" required style="height: 60px;">
+                </div>
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="tel" name="phone" id="client_phone" placeholder="+268 7600 0000" required style="height: 60px;">
+                </div>
             </div>
-        </div>
-
-        <!-- Service Details -->
-        <div style="display: flex; align-items: center; gap: 0.75rem; margin-top: 3rem; margin-bottom: 2rem;">
-            <div style="width: 40px; height: 40px; background: rgba(251, 191, 36, 0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--secondary);">
-                <i class="fas fa-cog"></i>
-            </div>
-            <h3 style="font-size: 1.25rem; margin: 0;">Service Details</h3>
-        </div>
-
-        <div class="form-group">
-            <label>Service Category</label>
-            <select name="service_category" required style="height: 55px; font-weight: 600;">
-                <option value="" disabled {% if not selected_service %}selected{% endif %}>Select service type...</option>
-                <option value="UPS and Solar Power Systems" {% if selected_service == 'UPS and Solar Power Systems' %}selected{% endif %}>UPS and Solar Power Systems</option>
-                <option value="ATM Hardware maintenance" {% if selected_service == 'ATM Hardware maintenance' %}selected{% endif %}>ATM Hardware maintenance</option>
-                <option value="Cash deposit Machines Maintenance" {% if selected_service == 'Cash deposit Machines Maintenance' %}selected{% endif %}>Cash deposit Machines Maintenance</option>
-                <option value="CCTV installation" {% if selected_service == 'CCTV installation' %}selected{% endif %}>CCTV installation</option>
-                <option value="Access control system" {% if selected_service == 'Access control system' %}selected{% endif %}>Access control system</option>
-                <option value="Network installation and support" {% if selected_service == 'Network installation and support' %}selected{% endif %}>Network installation and support</option>
-                <option value="Desktop support/ Work station" {% if selected_service == 'Desktop support/ Work station' %}selected{% endif %}>Desktop support/ Work station</option>
-                <option value="Computers and Printers consumables" {% if selected_service == 'Computers and Printers consumables' %}selected{% endif %}>Computers and Printers consumables</option>
-                <option value="Hardware and software maintenance" {% if selected_service == 'Hardware and software maintenance' %}selected{% endif %}>Hardware and software maintenance</option>
-                <option value="Boom gates support and repairs" {% if selected_service == 'Boom gates support and repairs' %}selected{% endif %}>Boom gates support and repairs</option>
-                <option value="Weather station calibration" {% if selected_service == 'Weather station calibration' %}selected{% endif %}>Weather station calibration</option>
-                <option value="Repair of all kinds of electronics" {% if selected_service == 'Repair of all kinds of electronics' %}selected{% endif %}>Repair of all kinds of electronics</option>
-                <option value="Note counter machines Maintenance" {% if selected_service == 'Note counter machines Maintenance' %}selected{% endif %}>Note counter machines Maintenance</option>
-                <option value="IT Consultancy" {% if selected_service == 'IT Consultancy' %}selected{% endif %}>IT Consultancy</option>
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label>Technical Issue Description</label>
-            <textarea name="issue" rows="4" placeholder="Describe the specific problem or requirement..." required></textarea>
-        </div>
-
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
-            <div class="form-group">
-                <label>Preferred Visit Date</label>
-                <input type="date" name="date" value="{{ current_date }}" required min="{{ current_date }}">
-            </div>
-            <div class="form-group">
-                <label>Physical Address / Landmark</label>
-                <textarea name="physical_address" rows="3" placeholder="e.g. Near Manzini Primary main gate, House #42..." required></textarea>
+            <div style="margin-top: 3rem; display: flex; justify-content: flex-end;">
+                <button type="button" class="btn btn-primary" style="padding: 1rem 3rem;" onclick="nextStep(2)">
+                    Continue <i class="fas fa-chevron-right" style="margin-left: 0.5rem;"></i>
+                </button>
             </div>
         </div>
 
-        <!-- Photo Upload -->
-        <div style="display: flex; align-items: center; gap: 0.75rem; margin-top: 3rem; margin-bottom: 2rem;">
-            <div style="width: 40px; height: 40px; background: rgba(16, 185, 129, 0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #10b981;">
-                <i class="fas fa-camera"></i>
+        <!-- STEP 2: Service Selection -->
+        <div class="form-step" id="step-2">
+            <h3 class="form-section-title">What service do you require?</h3>
+            <div class="service-selection-grid">
+                {% set services = [
+                    ('UPS and Solar Power Systems', 'fa-solar-panel', 'solar.png'),
+                    ('ATM Hardware maintenance', 'fa-money-bill-wave', 'atm.png'),
+                    ('Cash deposit Machines Maintenance', 'fa-vault', 'atm.png'),
+                    ('CCTV installation', 'fa-video', 'security.png'),
+                    ('Access control system', 'fa-id-card-clip', 'security.png'),
+                    ('Network installation and support', 'fa-network-wired', 'it.png'),
+                    ('Desktop support/ Work station', 'fa-desktop', 'it.png'),
+                    ('Computers and Printers consumables', 'fa-print', 'it.png'),
+                    ('Hardware and software maintenance', 'fa-microchip', 'it.png'),
+                    ('Boom gates support and repairs', 'fa-door-open', 'security.png'),
+                    ('Weather station calibration', 'fa-cloud-sun', 'solar.png'),
+                    ('Repair of all kinds of electronics', 'fa-plug', 'it.png'),
+                    ('Note counter machines Maintenance', 'fa-coins', 'atm.png'),
+                    ('IT Consultancy', 'fa-user-tie', 'it.png')
+                ] %}
+                {% for label, icon, img in services %}
+                <label>
+                    <input type="radio" name="service_category" value="{{ label }}" class="service-card-input" 
+                           {% if selected_service == label %}checked{% endif %} required>
+                    <div class="service-card-ui">
+                        <div class="service-card-image" style="background-image: url('{{ url_for('static', filename='images/' + img) }}')"></div>
+                        <div class="service-card-content">
+                            <i class="fas {{ icon }}"></i>
+                            <span>{{ label }}</span>
+                        </div>
+                    </div>
+                </label>
+                {% endfor %}
             </div>
-            <h3 style="font-size: 1.25rem; margin: 0;">Reference Photo <span style="font-size: 0.85rem; color: var(--text-muted); font-weight: 500;">(Optional)</span></h3>
+            <div style="margin-top: 4rem; display: flex; justify-content: space-between; align-items: center;">
+                <button type="button" class="btn btn-outline" onclick="prevStep(1)">
+                    <i class="fas fa-chevron-left"></i> Back
+                </button>
+                <button type="button" class="btn btn-primary" style="padding: 1rem 3rem;" onclick="nextStep(3)">
+                    Continue <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
         </div>
 
-        <div class="form-group">
-            <input type="file" name="image" id="imageInput" accept="image/*" style="display: none;" onchange="previewImage(this)">
-            <div class="upload-area" onclick="document.getElementById('imageInput').click()">
-                <i class="fas fa-cloud-upload-alt" style="font-size: 2rem; color: var(--primary); margin-bottom: 0.75rem; display: block;"></i>
-                <span style="font-size: 0.9rem; font-weight: 700; color: var(--primary);">Click to Upload a Photo</span>
-                <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.5rem;">Helps our engineers better understand the issue</p>
-                <img id="preview" class="upload-preview">
+        <!-- STEP 3: Details & Location -->
+        <div class="form-step" id="step-3">
+            <h3 class="form-section-title">Final details & Dispatch info</h3>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                <div class="form-group">
+                    <label>Describe the Technical Issue</label>
+                    <textarea name="issue" rows="6" placeholder="What's happening? Be as specific as possible..." required></textarea>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                    <div class="form-group">
+                        <label>Preferred Visit Date</label>
+                        <input type="date" name="date" value="{{ current_date }}" required min="{{ current_date }}" style="height: 60px;">
+                    </div>
+                    <div class="form-group">
+                        <label>Physical Address / Landmark</label>
+                        <textarea name="physical_address" rows="2" placeholder="e.g. Near Manzini Primary main gate..." required></textarea>
+                    </div>
+                </div>
             </div>
-        </div>
 
-        <div style="margin-top: 4rem; border-top: 2px solid var(--border); padding-top: 3rem; display: flex; justify-content: flex-end; align-items: center; gap: 2rem;">
-            <a href="{{ url_for('customer_view') }}" style="color: var(--text-muted); font-weight: 700; text-decoration: none; font-size: 0.95rem;">Cancel &amp; Return</a>
-            <button type="submit" class="btn btn-primary" style="padding: 1.25rem 5rem; font-size: 1.1rem;">
-                Submit Request <i class="fas fa-arrow-right" style="margin-left: 0.5rem;"></i>
-            </button>
+            <div class="form-group" style="margin-top: 2rem;">
+                <label>Reference Photo <span style="font-size: 0.8rem; color: var(--text-muted);">(Optional)</span></label>
+                <input type="file" name="image" id="imageInput" accept="image/*" style="display: none;" onchange="previewImage(this)">
+                <div class="upload-area" onclick="document.getElementById('imageInput').click()">
+                    <div id="uploadContent">
+                        <i class="fas fa-camera-retro" style="font-size: 2.5rem; color: var(--primary); margin-bottom: 1rem; display: block;"></i>
+                        <span style="font-weight: 800; color: var(--primary);">Attach a Photo</span>
+                        <p style="font-size: 0.85rem; margin-top: 0.5rem;">Visuals help our engineers prepare the right tools.</p>
+                    </div>
+                    <img id="preview" class="upload-preview">
+                </div>
+            </div>
+
+            <div style="margin-top: 4rem; display: flex; justify-content: space-between; align-items: center; border-top: 2px solid var(--border); padding-top: 3rem;">
+                <button type="button" class="btn btn-outline" onclick="prevStep(2)">
+                    <i class="fas fa-chevron-left"></i> Back
+                </button>
+                <button type="submit" class="btn btn-primary" style="padding: 1.25rem 4rem; font-size: 1.1rem; box-shadow: 0 15px 30px -10px rgba(37, 99, 235, 0.4);">
+                    Submit Request <i class="fas fa-paper-plane" style="margin-left: 0.75rem;"></i>
+                </button>
+            </div>
         </div>
     </form>
 </div>
 
 {% block scripts %}
 <script>
+    let currentStep = 1;
+
+    function updateProgress() {
+        const fill = document.getElementById('progressBar');
+        fill.style.width = ((currentStep - 1) / 2) * 100 + '%';
+
+        for (let i = 1; i <= 3; i++) {
+            const node = document.getElementById(`node-${i}`);
+            if (i < currentStep) {
+                node.classList.add('completed');
+                node.classList.remove('active');
+                node.innerHTML = `<i class="fas fa-check"></i> <span class="step-label">${node.querySelector('.step-label').innerText}</span>`;
+            } else if (i === currentStep) {
+                node.classList.add('active');
+                node.classList.remove('completed');
+                node.innerHTML = `${i} <span class="step-label">${node.querySelector('.step-label').innerText}</span>`;
+            } else {
+                node.classList.remove('active', 'completed');
+                node.innerHTML = `${i} <span class="step-label">${node.querySelector('.step-label').innerText}</span>`;
+            }
+        }
+    }
+
+    function validateStep(step) {
+        const container = document.getElementById(`step-${step}`);
+        const inputs = container.querySelectorAll('input[required], select[required], textarea[required]');
+        let valid = true;
+        
+        inputs.forEach(input => {
+            if (input.type === 'radio') {
+                const checked = container.querySelector(`input[name="${input.name}"]:checked`);
+                if (!checked) {
+                    valid = false;
+                    input.closest('.service-selection-grid').style.border = '1px solid var(--danger)';
+                    input.closest('.service-selection-grid').style.borderRadius = '20px';
+                    input.closest('.service-selection-grid').style.padding = '10px';
+                }
+            } else if (!input.value.trim()) {
+                valid = false;
+                input.style.borderColor = 'var(--danger)';
+            } else {
+                input.style.borderColor = '';
+            }
+        });
+        
+        if (!valid) {
+            // Flash error or alert
+            const toast = document.createElement('div');
+            toast.style = "position:fixed; bottom:2rem; left:50%; transform:translateX(-50%); background:var(--danger); color:white; padding:1rem 2rem; border-radius:12px; font-weight:800; z-index:9999; box-shadow:var(--shadow-lg);";
+            toast.innerText = "Please fill in all required fields.";
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+        return valid;
+    }
+
+    function nextStep(step) {
+        if (validateStep(currentStep)) {
+            document.getElementById(`step-${currentStep}`).classList.remove('active');
+            document.getElementById(`step-${step}`).classList.add('active');
+            currentStep = step;
+            updateProgress();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    }
+
+    function prevStep(step) {
+        document.getElementById(`step-${currentStep}`).classList.remove('active');
+        document.getElementById(`step-${step}`).classList.add('active');
+        currentStep = step;
+        updateProgress();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
     function previewImage(input) {
         const preview = document.getElementById('preview');
-        const uploadLabel = document.querySelector('.upload-area span');
-        const uploadIcon = document.querySelector('.upload-area i');
+        const content = document.getElementById('uploadContent');
 
         if (input.files && input.files[0]) {
             const reader = new FileReader();
             reader.onload = function(e) {
                 preview.src = e.target.result;
                 preview.style.display = 'block';
-                uploadLabel.innerText = "Change Photo";
-                uploadIcon.style.display = 'none';
+                content.style.display = 'none';
             }
             reader.readAsDataURL(input.files[0]);
         }
