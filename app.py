@@ -9,6 +9,7 @@ from utils.payments import process_payout
 from werkzeug.utils import secure_filename
 from datetime import datetime
 from dotenv import load_dotenv
+from flask_mail import Mail, Message
 
 # Load environment variables from .env
 load_dotenv()
@@ -19,9 +20,18 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:/
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = os.path.join('static', 'uploads')
 
+# Mail Settings
+app.config['MAIL_SERVER'] = os.environ.get('MAIL_SERVER', 'smtp.gmail.com')
+app.config['MAIL_PORT'] = int(os.environ.get('MAIL_PORT', 587))
+app.config['MAIL_USE_TLS'] = os.environ.get('MAIL_USE_TLS', 'True') == 'True'
+app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
+app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_DEFAULT_SENDER')
+
 # Ensure upload directory exists
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
+mail = Mail(app)
 db.init_app(app)
 login_manager = LoginManager()
 login_manager.login_view = 'login'
@@ -326,6 +336,35 @@ def view_journey(apt_id):
     logs = LocationLog.query.filter_by(appointment_id=apt_id).order_by(LocationLog.timestamp.asc()).all()
     return render_template('journey_map.html', appointment=apt, logs=logs)
 
+@app.route('/api/journey/live/<int:apt_id>')
+@login_required
+@role_required('admin')
+def get_live_journey(apt_id):
+    logs = LocationLog.query.filter_by(appointment_id=apt_id).order_by(LocationLog.timestamp.asc()).all()
+    data = [{'lat': l.lat, 'lng': l.lng, 'time': l.timestamp.strftime('%H:%M:%S')} for l in logs]
+    return {'logs': data}
+
+@app.route('/api/technicians/live')
+@login_required
+@role_required('admin')
+def live_technicians():
+    active_jobs = Appointment.query.filter_by(status='In Progress').all()
+    tech_data = []
+    for job in active_jobs:
+        if job.engineer_id:
+            latest_log = LocationLog.query.filter_by(appointment_id=job.id, user_id=job.engineer_id).order_by(LocationLog.timestamp.desc()).first()
+            if latest_log:
+                tech_data.append({
+                    'id': job.engineer_id,
+                    'name': job.engineer.name,
+                    'job_id': job.id,
+                    'lat': latest_log.lat,
+                    'lng': latest_log.lng,
+                    'time': latest_log.timestamp.strftime('%H:%M:%S'),
+                    'address': job.physical_address
+                })
+    return {'technicians': tech_data}
+
 @app.route('/admin/assign/<int:id>', methods=['POST'])
 @login_required
 @role_required('admin')
@@ -360,7 +399,25 @@ def generate_invoice(id):
         )
         db.session.add(invoice)
         db.session.commit()
-        flash('Invoice generated!')
+        
+        apt = db.session.get(Appointment, id)
+        client_email = apt.guest_email or (apt.customer.email if apt.customer else None)
+        client_name = apt.guest_name or (apt.customer.name if apt.customer else 'Client')
+        
+        if client_email and app.config['MAIL_USERNAME']:
+            try:
+                payment_link = url_for('view_invoice', id=invoice.id, _external=True)
+                msg = Message(f"Invoice for Work Order #SR-{apt.id:05d}", recipients=[client_email])
+                msg.body = f"Hello {client_name},\n\nYour invoice for service '{apt.service_category}' is ready.\n\nTotal Amount: E{total:,.2f}\n\nPlease pay here: {payment_link}\n\nThank you,\nDigiTech Admin"
+                msg.html = f"<p>Hello {client_name},</p><p>Your invoice for service <strong>{apt.service_category}</strong> is ready.</p><p><strong>Total Amount: E{total:,.2f}</strong></p><p><a href='{payment_link}'>Click here to pay securely</a></p><p>Thank you,<br>DigiTech Admin</p>"
+                mail.send(msg)
+                flash('Invoice generated and sent to client email!')
+            except Exception as e:
+                print(f"Mail error: {e}")
+                flash('Invoice generated, but failed to send email. Check SMTP settings.', 'error')
+        else:
+            flash('Invoice generated! (Email not sent - missing client email or SMTP config)')
+            
         return redirect(url_for('admin_dashboard'))
     
     apt = db.session.get(Appointment, id)

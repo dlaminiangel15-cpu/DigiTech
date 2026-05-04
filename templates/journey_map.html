@@ -27,15 +27,15 @@
         <div style="margin-top: 2rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
             <div class="glass-card" style="padding: 1.5rem; text-align: center;">
                 <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 800; text-transform: uppercase;">Points Recorded</div>
-                <div style="font-size: 1.5rem; font-weight: 900; color: var(--primary);">{{ logs|length }}</div>
+                <div id="log-count" style="font-size: 1.5rem; font-weight: 900; color: var(--primary);">{{ logs|length }}</div>
             </div>
             <div class="glass-card" style="padding: 1.5rem; text-align: center;">
                 <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 800; text-transform: uppercase;">Start Time</div>
-                <div style="font-size: 1rem; font-weight: 700;">{{ logs[0].timestamp.strftime('%H:%M:%S') }}</div>
+                <div id="start-time" style="font-size: 1rem; font-weight: 700;">{{ logs[0].timestamp.strftime('%H:%M:%S') }}</div>
             </div>
             <div class="glass-card" style="padding: 1.5rem; text-align: center;">
                 <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 800; text-transform: uppercase;">Last Update</div>
-                <div style="font-size: 1rem; font-weight: 700;">{{ logs[-1].timestamp.strftime('%H:%M:%S') }}</div>
+                <div id="last-time" style="font-size: 1rem; font-weight: 700;">{{ logs[-1].timestamp.strftime('%H:%M:%S') }}</div>
             </div>
         </div>
     {% else %}
@@ -57,32 +57,53 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const pathData = [
-            {% for log in logs %}
-                [{{ log.lat }}, {{ log.lng }}],
-            {% endfor %}
-        ];
+        const appointmentId = {{ appointment.id }};
+        let map;
+        let polyline;
+        let startMarker, endMarker;
 
-        const map = L.map('journey-map').setView(pathData[0], 15);
-        
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
+        async function fetchLiveJourney() {
+            try {
+                const response = await fetch(`/api/journey/live/${appointmentId}`);
+                const data = await response.json();
+                const logs = data.logs;
 
-        // Draw Polyline
-        const polyline = L.polyline(pathData, {
-            color: '#2563eb',
-            weight: 5,
-            opacity: 0.7,
-            smoothFactor: 1
-        }).addTo(map);
+                if (logs.length > 0) {
+                    const pathData = logs.map(log => [log.lat, log.lng]);
+                    
+                    if (!map) {
+                        map = L.map('journey-map').setView(pathData[0], 15);
+                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                            attribution: '&copy; OpenStreetMap contributors'
+                        }).addTo(map);
 
-        // Add Markers for Start and End
-        L.marker(pathData[0], {title: "Start"}).addTo(map).bindPopup("Journey Started");
-        L.marker(pathData[pathData.length - 1], {title: "End"}).addTo(map).bindPopup("Last Known Location");
+                        polyline = L.polyline(pathData, {
+                            color: '#2563eb', weight: 5, opacity: 0.7, smoothFactor: 1
+                        }).addTo(map);
 
-        // Fit map to polyline
-        map.fitBounds(polyline.getBounds(), {padding: [50, 50]});
+                        startMarker = L.marker(pathData[0], {title: "Start"}).addTo(map).bindPopup("Journey Started");
+                        endMarker = L.marker(pathData[pathData.length - 1], {title: "Current/End"}).addTo(map).bindPopup("Last Known Location");
+                        
+                        map.fitBounds(polyline.getBounds(), {padding: [50, 50]});
+                    } else {
+                        // Update existing map without resetting view entirely
+                        polyline.setLatLngs(pathData);
+                        endMarker.setLatLng(pathData[pathData.length - 1]);
+                        endMarker.getPopup().setContent(`Last Known Location (Live)`);
+                    }
+                    
+                    document.getElementById('log-count').innerText = logs.length;
+                    document.getElementById('start-time').innerText = logs[0].time;
+                    document.getElementById('last-time').innerText = logs[logs.length - 1].time;
+                }
+            } catch (err) {
+                console.error("Error fetching live journey:", err);
+            }
+        }
+
+        // Initialize and set interval for live tracking
+        fetchLiveJourney();
+        setInterval(fetchLiveJourney, 30000); // 30 seconds
     });
 </script>
 {% endif %}

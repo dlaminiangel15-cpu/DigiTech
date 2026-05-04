@@ -23,12 +23,12 @@
 
     <form method="POST">
         <div class="form-group">
-            <label>Service Fee ($)</label>
+            <label>Service Fee (E)</label>
             <input type="number" name="service_fee" id="service_fee" step="0.01" placeholder="0.00" required oninput="calcTotal()">
         </div>
         
         <div class="form-group">
-            <label>Transport & Logistic Fee ($)</label>
+            <label>Transport & Logistic Fee (E)</label>
             <input type="number" name="transport_fee" id="transport_fee" step="0.01" placeholder="0.00" required oninput="calcTotal()">
         </div>
 
@@ -39,7 +39,7 @@
 
         <div class="glass" style="padding: 1.5rem; text-align: right; margin-bottom: 2rem;">
             <span style="color: var(--text-muted); font-size: 1.1rem;">Total Amount:</span>
-            <span id="total_amount" style="font-size: 2rem; font-weight: 800; color: var(--primary); margin-left: 1rem;">$0.00</span>
+            <span id="total_amount" style="font-size: 2rem; font-weight: 800; color: var(--primary); margin-left: 1rem;">E0.00</span>
         </div>
 
         <div style="display: flex; gap: 1rem;">
@@ -54,7 +54,7 @@
         const service = parseFloat(document.getElementById('service_fee').value) || 0;
         const transport = parseFloat(document.getElementById('transport_fee').value) || 0;
         const total = service + transport;
-        document.getElementById('total_amount').innerText = '$' + total.toFixed(2);
+        document.getElementById('total_amount').innerText = 'E' + total.toFixed(2);
     }
 </script>
 {% endblock %}
