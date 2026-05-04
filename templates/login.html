@@ -3,11 +3,11 @@
 {% block title %}Staff Portal | Access Control{% endblock %}
 
 {% block content %}
-<div class="animate-up" style="display: flex; align-items: center; justify-content: center; min-height: 85vh; padding: 2rem;">
-    <div class="card" style="display: grid; grid-template-columns: 1fr 1.2fr; max-width: 1100px; width: 100%; padding: 0; overflow: hidden; border: none; box-shadow: 0 50px 100px -20px rgba(0,0,0,0.25); border-radius: 32px; background: white;">
+<div class="animate-up login-container" style="display: flex; align-items: center; justify-content: center; min-height: 85vh; padding: 2rem;">
+    <div class="card login-grid">
         
         <!-- Left Side: Visual/Branding -->
-        <div style="background: linear-gradient(135deg, var(--nav-bg) 0%, var(--primary-dark) 100%); padding: 5rem; display: flex; flex-direction: column; justify-content: center; color: white; position: relative; overflow: hidden;">
+        <div class="login-left" style="background: linear-gradient(135deg, var(--nav-bg) 0%, var(--primary-dark) 100%); display: flex; flex-direction: column; justify-content: center; color: white; position: relative; overflow: hidden;">
             <div style="position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; background: rgba(250, 204, 21, 0.1); border-radius: 50%; filter: blur(50px);"></div>
             <div style="position: absolute; bottom: -50px; left: -50px; width: 300px; height: 300px; background: rgba(26, 79, 160, 0.2); border-radius: 50%; filter: blur(80px);"></div>
             
@@ -36,7 +36,7 @@
         </div>
 
         <!-- Right Side: Login Form -->
-        <div style="padding: 6rem; background: #fff; display: flex; flex-direction: column; justify-content: center;">
+        <div class="login-right" style="background: #fff; display: flex; flex-direction: column; justify-content: center;">
             <div style="margin-bottom: 4rem;">
                 <h2 style="font-size: 2.25rem; font-weight: 900; color: var(--text-main); margin-bottom: 0.5rem;">Welcome Back</h2>
                 <p style="color: var(--text-muted); font-weight: 600;">Please enter your credentials to continue</p>
