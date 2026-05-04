@@ -307,8 +307,8 @@
         }
 
         function closeSidebar() {
-            sidebar.classList.remove('sidebar-open');
-            overlay.style.display = 'none';
+            if (sidebar) sidebar.classList.remove('sidebar-open');
+            if (overlay) overlay.style.display = 'none';
         }
 
         // Show hamburger on small screens

@@ -334,14 +334,21 @@
 
 {% block scripts %}
 <script>
-    // Initialize Flatpickr
-    flatpickr("#calendar-input", {
-        minDate: "today",
-        dateFormat: "Y-m-d",
-        altInput: true,
-        altFormat: "F j, Y",
-        disableMobile: true
-    });
+    try {
+        if (typeof flatpickr !== 'undefined') {
+            flatpickr("#calendar-input", {
+                minDate: "today",
+                dateFormat: "Y-m-d",
+                altInput: true,
+                altFormat: "F j, Y",
+                disableMobile: true
+            });
+        } else {
+            console.warn("Flatpickr failed to load from CDN.");
+        }
+    } catch (e) {
+        console.error("Flatpickr initialization error:", e);
+    }
 
     function validateSubmission() {
         const dateInput = document.getElementById('calendar-input');
