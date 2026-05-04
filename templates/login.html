@@ -37,15 +37,15 @@
 
         <!-- Right Side: Login Form -->
         <div class="login-right" style="background: #fff; display: flex; flex-direction: column; justify-content: center;">
-            <div style="margin-bottom: 4rem;">
-                <h2 style="font-size: 2.25rem; font-weight: 900; color: var(--text-main); margin-bottom: 0.5rem;">Welcome Back</h2>
-                <p style="color: var(--text-muted); font-weight: 600;">Please enter your credentials to continue</p>
+            <div class="login-header-wrapper">
+                <h2 class="login-title">Welcome Back</h2>
+                <p class="login-subtitle">Please enter your credentials to continue</p>
             </div>
 
             {% with messages = get_flashed_messages() %}
                 {% if messages %}
                     {% for message in messages %}
-                        <div class="animate-up" style="padding: 1.25rem; background: #fef2f2; border: 1px solid #fee2e2; border-radius: 16px; color: #991b1b; margin-bottom: 2.5rem; font-size: 0.95rem; font-weight: 700; display: flex; align-items: center; gap: 0.75rem;">
+                        <div class="animate-up login-alert">
                             <i class="fas fa-exclamation-triangle"></i> {{ message }}
                         </div>
                     {% endfor %}
@@ -53,30 +53,28 @@
             {% endwith %}
 
             <form method="POST">
-                <div class="form-group" style="margin-bottom: 2rem;">
-                    <label style="color: var(--text-main); font-weight: 800; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em;">System Email</label>
-                    <div style="position: relative; margin-top: 0.75rem;">
-                        <i class="far fa-envelope" style="position: absolute; left: 1.5rem; top: 1.25rem; color: var(--text-muted);"></i>
-                        <input type="email" name="email" autocomplete="username" placeholder="name@digitalinfrastructure.co.za" required 
-                               style="padding-left: 3.5rem; height: 65px; border-radius: 16px; border: 2px solid #f1f5f9; background: #f8fafc; font-weight: 600; font-size: 1rem;">
+                <div class="login-input-group">
+                    <label class="login-label">System Email</label>
+                    <div class="login-input-wrapper">
+                        <i class="far fa-envelope login-icon"></i>
+                        <input type="email" name="email" class="login-input" autocomplete="username" placeholder="name@digitalinfrastructure.co.za" required>
                     </div>
                 </div>
-                <div class="form-group" style="margin-bottom: 3rem;">
-                    <label style="color: var(--text-main); font-weight: 800; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em;">Access Token</label>
-                    <div style="position: relative; margin-top: 0.75rem;">
-                        <i class="fas fa-key" style="position: absolute; left: 1.5rem; top: 1.25rem; color: var(--text-muted);"></i>
-                        <input type="password" name="password" autocomplete="current-password" placeholder="••••••••" required 
-                               style="padding-left: 3.5rem; height: 65px; border-radius: 16px; border: 2px solid #f1f5f9; background: #f8fafc; font-weight: 600; font-size: 1rem;">
+                <div class="login-input-group" style="margin-bottom: 3rem;">
+                    <label class="login-label">Access Token</label>
+                    <div class="login-input-wrapper">
+                        <i class="fas fa-key login-icon"></i>
+                        <input type="password" name="password" class="login-input" autocomplete="current-password" placeholder="••••••••" required>
                     </div>
                 </div>
                 
-                <button type="submit" class="btn btn-primary" style="width: 100%; height: 70px; font-size: 1.15rem; font-weight: 800; border-radius: 18px; background: var(--nav-bg); box-shadow: 0 15px 30px rgba(15, 23, 42, 0.25); display: flex; align-items: center; justify-content: center; gap: 0.75rem;">
+                <button type="submit" class="btn btn-primary login-submit-btn">
                     Authenticate Identity <i class="fas fa-arrow-right"></i>
                 </button>
             </form>
 
-            <div style="margin-top: 5rem; text-align: center;">
-                <a href="/" style="color: var(--text-muted); text-decoration: none; font-weight: 700; font-size: 0.9rem; transition: color 0.3s ease;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--text-muted)'">
+            <div class="login-footer">
+                <a href="/" class="login-return-link">
                     <i class="fas fa-chevron-left" style="margin-right: 0.5rem; font-size: 0.8rem;"></i> Return to Public Site
                 </a>
             </div>
