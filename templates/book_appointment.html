@@ -345,9 +345,9 @@
 
     function validateSubmission() {
         const dateInput = document.getElementById('calendar-input');
-        if (!dateInput.value) {
+        if (!dateInput || !dateInput.value) {
             const toast = document.createElement('div');
-            toast.style = "position:fixed; bottom:2rem; left:50%; transform:translateX(-50%); background:var(--danger); color:white; padding:1rem 2rem; border-radius:12px; font-weight:800; z-index:9999; box-shadow:var(--shadow-lg);";
+            toast.style = "position:fixed; bottom:2rem; left:50%; transform:translateX(-50%); background:var(--danger, #ef4444); color:white; padding:1rem 2rem; border-radius:12px; font-weight:800; z-index:9999; box-shadow:0 10px 15px -3px rgba(0,0,0,0.1);";
             toast.innerText = "Please select a preferred visit date before submitting.";
             document.body.appendChild(toast);
             setTimeout(() => toast.remove(), 4000);
@@ -357,31 +357,34 @@
     }
 
     let currentStep = 1;
+    const stepLabels = ['Basic Info', 'Select Service', 'Job Details'];
 
     function updateProgress() {
         const fill = document.getElementById('progressBar');
-        fill.style.width = ((currentStep - 1) / 2) * 100 + '%';
+        if (fill) fill.style.width = ((currentStep - 1) / 2) * 100 + '%';
 
         for (let i = 1; i <= 3; i++) {
             const node = document.getElementById(`node-${i}`);
+            if (!node) continue;
+            
             if (i < currentStep) {
-                node.classList.add('completed');
-                node.classList.remove('active');
-                node.innerHTML = `<i class="fas fa-check"></i> <span class="step-label">${node.querySelector('.step-label').innerText}</span>`;
+                node.className = 'step-node completed';
+                node.innerHTML = `<i class="fas fa-check"></i> <span class="step-label">${stepLabels[i-1]}</span>`;
             } else if (i === currentStep) {
-                node.classList.add('active');
-                node.classList.remove('completed');
-                node.innerHTML = `${i} <span class="step-label">${node.querySelector('.step-label').innerText}</span>`;
+                node.className = 'step-node active';
+                node.innerHTML = `${i} <span class="step-label">${stepLabels[i-1]}</span>`;
             } else {
-                node.classList.remove('active', 'completed');
-                node.innerHTML = `${i} <span class="step-label">${node.querySelector('.step-label').innerText}</span>`;
+                node.className = 'step-node';
+                node.innerHTML = `${i} <span class="step-label">${stepLabels[i-1]}</span>`;
             }
         }
     }
 
     function validateStep(step) {
         const container = document.getElementById(`step-${step}`);
-        const inputs = container.querySelectorAll('input[required], select[required], textarea[required]');
+        if (!container) return true;
+        
+        const inputs = Array.from(container.querySelectorAll('input[required], select[required], textarea[required]'));
         let valid = true;
         
         inputs.forEach(input => {
@@ -391,23 +394,32 @@
                     valid = false;
                     const selectionGrid = input.closest('.service-selection-grid');
                     if (selectionGrid) {
-                        selectionGrid.style.border = '1px solid var(--danger)';
+                        selectionGrid.style.border = '1px solid var(--danger, #ef4444)';
                         selectionGrid.style.borderRadius = '20px';
                         selectionGrid.style.padding = '10px';
                     }
+                } else {
+                    const selectionGrid = input.closest('.service-selection-grid');
+                    if (selectionGrid) {
+                        selectionGrid.style.border = 'none';
+                        selectionGrid.style.padding = '0';
+                    }
                 }
-            } else if (!input.value.trim()) {
-                valid = false;
-                input.style.borderColor = 'var(--danger)';
             } else {
-                input.style.borderColor = '';
+                const val = input.value || '';
+                if (!val.trim()) {
+                    valid = false;
+                    input.style.borderColor = 'var(--danger, #ef4444)';
+                } else {
+                    input.style.borderColor = '';
+                }
             }
         });
         
         if (!valid) {
             // Flash error or alert
             const toast = document.createElement('div');
-            toast.style = "position:fixed; bottom:2rem; left:50%; transform:translateX(-50%); background:var(--danger); color:white; padding:1rem 2rem; border-radius:12px; font-weight:800; z-index:9999; box-shadow:var(--shadow-lg);";
+            toast.style = "position:fixed; bottom:2rem; left:50%; transform:translateX(-50%); background:var(--danger, #ef4444); color:white; padding:1rem 2rem; border-radius:12px; font-weight:800; z-index:9999; box-shadow:0 10px 15px -3px rgba(0,0,0,0.1);";
             toast.innerText = "Please fill in all required fields.";
             document.body.appendChild(toast);
             setTimeout(() => toast.remove(), 3000);
@@ -416,21 +428,33 @@
     }
 
     function nextStep(step) {
-        if (validateStep(currentStep)) {
-            document.getElementById(`step-${currentStep}`).classList.remove('active');
-            document.getElementById(`step-${step}`).classList.add('active');
-            currentStep = step;
-            updateProgress();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+        try {
+            if (validateStep(currentStep)) {
+                const currentEl = document.getElementById(`step-${currentStep}`);
+                const nextEl = document.getElementById(`step-${step}`);
+                if (currentEl) currentEl.classList.remove('active');
+                if (nextEl) nextEl.classList.add('active');
+                currentStep = step;
+                updateProgress();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        } catch (e) {
+            console.error("Error in nextStep:", e);
         }
     }
 
     function prevStep(step) {
-        document.getElementById(`step-${currentStep}`).classList.remove('active');
-        document.getElementById(`step-${step}`).classList.add('active');
-        currentStep = step;
-        updateProgress();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        try {
+            const currentEl = document.getElementById(`step-${currentStep}`);
+            const prevEl = document.getElementById(`step-${step}`);
+            if (currentEl) currentEl.classList.remove('active');
+            if (prevEl) prevEl.classList.add('active');
+            currentStep = step;
+            updateProgress();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        } catch (e) {
+            console.error("Error in prevStep:", e);
+        }
     }
 
     function previewImage(input) {
